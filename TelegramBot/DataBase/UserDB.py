@@ -12,8 +12,40 @@ conn = psycopg2.connect(dbname=DB_NAME, host=DB_HOST, user=DB_USER, password=DB_
 cursor = conn.cursor()
 conn.autocommit = True
 
-cursor.execute("SELECT email FROM people WHERE email = '@a'", ())
-result = str(cursor.fetchone())[2:-3]
-print(result)
+# cursor.execute("""
+#         INSERT INTO Categories (category_id, name) VALUES
+#         (1, 'Транспорт'),
+#         (2, 'Недвижимость'),
+#         (3, 'Работа'),
+#         (4, 'Услуги'),
+#         (5, 'Личные вещи'),
+#         (6, 'Для дома и дачи'),
+#         (7, 'Бытовая электроника'),
+#         (8, 'Хобби и отдых'),
+#         (9, 'Животные'),
+#         (10, 'Для бизнеса')
+#     """)
 
 
+# cursor.execute("""
+#         INSERT INTO Locations (location_id, city, state, country) VALUES
+#         (1, 'Москва', 'Московская область', 'Россия'),
+#         (2, 'Санкт-Петербург', NULL, 'Россия'),
+#         (3, 'Новосибирск', NULL, 'Россия'),
+#         (4, 'Екатеринбург', NULL, 'Россия'),
+#         (5, 'Ростов-на-Дону', 'Ростовская область', 'Россия'),
+#         (6, 'Минск', NULL, 'Беларусь'),
+#         (7, 'Алматы', NULL, 'Казахстан'),
+#         (8, 'Нью-Йорк', 'NY', 'США'),
+#         (9, 'Лос-Анджелес', 'CA', 'США'),
+#         (10, 'Лондон', NULL, 'Великобритания')
+#     """)
+
+
+# cursor.execute("""
+#         INSERT INTO Ads (ad_id, user_id, category_id, location_id, title, description) VALUES
+#         (1, 1, 1, 1, 'Продам Toyota Camry', '2015 г.в., пробег 100000 км'),
+#         (2, 2, 2, 2, 'Сдам 2-комнатную квартиру', 'Центр, 60 кв.м, после ремонта'),
+#         (3, 3, 3, 3, 'Продам iPhone 13', 'Новый, в коробке, гарантия')
+#     """)
+conn.close()
