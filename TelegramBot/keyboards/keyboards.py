@@ -21,7 +21,7 @@ ads_kb = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="⬅️Назад", callback_data="prev_ad"),
          KeyboardButton(text="Вперед➡️", callback_data="next_ad")],
-        [KeyboardButton(text="Разместить объявление")],
+        [KeyboardButton(text="✔️Разместить объявление")],
         [KeyboardButton(text="🏠На главную")]], resize_keyboard=True,
     input_field_placeholder="Воспользуйтесь меню:"
 )

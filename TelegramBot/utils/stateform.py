@@ -11,3 +11,11 @@ class Form(StatesGroup):
     password = State()
     auth_password = State()  # Состояние для ввода пароля при авторизации
     authorized = State()  # Состояние для авторизованного пользователя
+
+
+class NewAds(StatesGroup):
+    category = State()
+    location = State()
+    title = State()
+    description = State()
+    money = State()
