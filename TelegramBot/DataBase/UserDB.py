@@ -12,5 +12,8 @@ conn = psycopg2.connect(dbname=DB_NAME, host=DB_HOST, user=DB_USER, password=DB_
 cursor = conn.cursor()
 conn.autocommit = True
 
-cursor.close()
-conn.close()
+cursor.execute("SELECT email FROM people WHERE email = '@a'", ())
+result = str(cursor.fetchone())[2:-3]
+print(result)
+
+
