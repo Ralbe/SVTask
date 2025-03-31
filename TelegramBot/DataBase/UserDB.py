@@ -12,6 +12,16 @@ conn = psycopg2.connect(dbname=DB_NAME, host=DB_HOST, user=DB_USER, password=DB_
 cursor = conn.cursor()
 conn.autocommit = True
 
+def get_ads():
+    """Получает все объявления из базы данных."""
+    cursor.execute("""
+        SELECT Ads.ad_id, Ads.title, Ads.description, Categories.name, Locations.city, Locations.country
+        FROM Ads
+        JOIN Categories ON Ads.category_id = Categories.category_id
+        JOIN Locations ON Ads.location_id = Locations.location_id
+    """)
+    return cursor.fetchall()
+
 # cursor.execute("""
 #         INSERT INTO Categories (category_id, name) VALUES
 #         (1, 'Транспорт'),
@@ -48,4 +58,3 @@ conn.autocommit = True
 #         (2, 2, 2, 2, 'Сдам 2-комнатную квартиру', 'Центр, 60 кв.м, после ремонта'),
 #         (3, 3, 3, 3, 'Продам iPhone 13', 'Новый, в коробке, гарантия')
 #     """)
-conn.close()
