@@ -12,10 +12,11 @@ conn = psycopg2.connect(dbname=DB_NAME, host=DB_HOST, user=DB_USER,
 cursor = conn.cursor()
 conn.autocommit = True
 
+
 def get_ads():
     """Получает все объявления из базы данных."""
     cursor.execute("""
-        SELECT Ads.ad_id, Ads.title, Ads.description, Categories.name, Locations.city, Locations.country, Ads.money
+        SELECT Ads.ad_id, Ads.title, Ads.description, Categories.name, Locations.city, Ads.money
         FROM Ads
         JOIN Categories ON Ads.category_id = Categories.category_id
         JOIN Locations ON Ads.location_id = Locations.location_id

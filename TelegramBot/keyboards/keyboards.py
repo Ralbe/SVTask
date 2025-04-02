@@ -25,3 +25,10 @@ ads_kb = ReplyKeyboardMarkup(
         [KeyboardButton(text="🏠На главную")]], resize_keyboard=True,
     input_field_placeholder="Воспользуйтесь меню:"
 )
+
+confirm_kb = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="Разместить✅")],
+        [KeyboardButton(text="Редактировать")]], resize_keyboard=True,
+    input_field_placeholder="Воспользуйтесь меню:"
+)
