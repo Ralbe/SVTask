@@ -19,3 +19,11 @@ class NewAds(StatesGroup):
     title = State()
     description = State()
     money = State()
+
+
+class CheckMessage(StatesGroup):
+    category_message = State()
+    location_message = State()
+    title_message = State()
+    description_message = State()
+    money_message = State()

@@ -15,7 +15,7 @@ conn.autocommit = True
 
 def get_ads():
     """Получает все объявления из базы данных."""
-    cursor.execute("""
+    cursor.execute("""         
         SELECT Ads.ad_id, Ads.title, Ads.description, Categories.name, Locations.city, Ads.money
         FROM Ads
         JOIN Categories ON Ads.category_id = Categories.category_id
@@ -44,7 +44,8 @@ def add_user(login, password, email):
         (login, password, email))
 
 
-def insert_new_ad(user_id, category_id, location_id, title, description, price):
+def insert_new_ad(user_id, category_id, location_id, title, description,
+                  price):
     cursor.execute(
         """
         INSERT INTO Ads (user_id, category_id, location_id, title, description, money)

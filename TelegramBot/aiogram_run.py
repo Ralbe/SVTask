@@ -5,9 +5,9 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import MemoryStorage
 import asyncio
-from utils.stateform import Form, NewAds
+from utils.stateform import Form, NewAds, CheckMessage
 from DataBase.UserDB import get_ads, get_user_by_email, authenticate_user, add_user, insert_new_ad, get_category_id, get_location_id, close_connection
-from keyboards.keyboards import main_kb, ads_kb, start_kb, confirm_kb
+from keyboards.keyboards import main_kb, ads_kb, start_kb, confirm_kb, red_kb
 from aiogram.client.bot import DefaultBotProperties
 from aiogram.enums import ParseMode
 
@@ -135,7 +135,8 @@ async def exit(message: Message, state: FSMContext):
 async def show_ads(message: Message, state: FSMContext):
     check_state = await state.get_state()
     if check_state == Form.authorized.state:
-        await message.answer("Выберите интересующий вариант.", reply_markup=ads_kb)
+        await message.answer("Выберите интересующий вариант.",
+                             reply_markup=ads_kb)
     else:
         await message.answer("Пожалуйста, авторизуйтесь, чтобы получить доступ к меню.")
 
@@ -153,7 +154,7 @@ async def display_ad(message: Message, state: FSMContext):
                    f"<b>Местоположение</b>: {ad[4]}\n"
                    f"<b>Заголовок</b>: {ad[1]}\n"
                    f"<b>Описание</b>: {ad[2]}\n"
-                   f"<b>Цена</b>: {ad[5]}")
+                   f"<b>Цена</b>: {ad[5]}₽")
         await message.answer(ad_text, reply_markup=ads_kb)
     else:
         await message.answer("Пожалуйста, авторизуйтесь, чтобы получить доступ к меню.")
@@ -172,7 +173,7 @@ async def display_ad(message: Message, state: FSMContext):
                    f"<b>Местоположение</b>: {ad[4]}\n"
                    f"<b>Заголовок</b>: {ad[1]}\n"
                    f"<b>Описание</b>: {ad[2]}\n"
-                   f"<b>Цена</b>: {ad[5]}")
+                   f"<b>Цена</b>: {ad[5]}₽")
         await message.answer(ad_text, reply_markup=ads_kb)
     else:
         await message.answer("Пожалуйста, авторизуйтесь, чтобы получить доступ к меню.")
@@ -233,17 +234,36 @@ async def process_money(message: Message, state: FSMContext):
                    f"<b>Описание</b>: {data["description"]}\n"
                    f"<b>Категория</b>: {data["category"]}\n"
                    f"<b>Местоположение</b>: {data["location"]}\n"
-                   f"<b>Цена</b>: {data["money"]}")
+                   f"<b>Цена</b>: {data["money"]}₽")
     await message.answer(ad_text, reply_markup=confirm_kb)
+    
     await state.clear()
+    
 
 @dp.message(F.text == "Разместить✅")
 async def message_okey(message: Message, state: FSMContext):
-    # вызов функции для записи данных в БД
+    logging.info(f"Authorized action state: {check_state}")
     await message.reply("Ваше объявление размещено")
     await handle_menu_command()
 
 
+@dp.message(F.text == "Редактировать✍️")
+async def message_red(message: Message, state: FSMContext):
+    await message.answer("Какую информацию вы хотите изменить?",
+                        reply_markup=red_kb)
+
+
+@dp.message(F.text == "Заголовок")
+async def message_red(message: Message, state: FSMContext):
+    data = await state.get_state()
+    await message.reply(f"Предыдущая информация:\n"
+                        f"{data["title"]}\n"
+                        f"Введите новую информацию")
+    await state.set_state(CheckMessage.title_message)
+
+
+
+   
 # Обработчик для проверки авторизации перед выполнением действий
 @dp.message()
 async def check_authorization(message: Message, state: FSMContext):
