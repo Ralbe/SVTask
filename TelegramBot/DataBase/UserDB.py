@@ -16,7 +16,7 @@ conn.autocommit = True
 def get_ads():
     """Получает все объявления из базы данных."""
     cursor.execute("""
-        SELECT Ads.ad_id, Ads.title, Ads.description, Categories.name, Locations.city, Ads.money
+        SELECT Ads.ad_id,Ads.user_id, Ads.title, Ads.description, Categories.name, Locations.city, Ads.money
         FROM Ads
         JOIN Categories ON Ads.category_id = Categories.category_id
         JOIN Locations ON Ads.location_id = Locations.location_id
@@ -37,11 +37,30 @@ def authenticate_user(email, password):
     return cursor.fetchone()
 
 
-def add_user(login, password, email):
-    """Добавляет нового пользователя в базу данных."""
+def set_user_data(first_name, second_name, phone, email, tg_id):
+    """Сохраняет данные пользователя"""
     cursor.execute(
-        "INSERT INTO people (username, password, email) VALUES (%s, %s, %s)",
-        (login, password, email))
+        """
+        UPDATE People
+        SET firstname = %s,
+        secondname = %s,
+        phone_number = %s,
+        email = %s
+        WHERE tg_id = %s
+        """,
+        (first_name, second_name, phone, email, tg_id))
+    
+def get_user_data(tg_id):
+    """Возвращает Имя, Фамилию, Номер, Почту"""
+
+    cursor.execute(
+        """
+        SELECT firstname, secondname, phone_number, email
+        FROM People
+        WHERE tg_id = %s
+        """,(tg_id,)
+    )
+    return cursor.fetchall()
     
 def set_contact(tg_id, name, number):
     """Добавляет нового пользователя в базу данных."""
@@ -84,7 +103,7 @@ def add_category(category_name):
 def add_user_by_tg_id(tg_id):
     """Добавляет пользователя по тг id."""
     cursor.execute("""  
-                   INSERT INTO People(name)
+                   INSERT INTO People(tg_id)
                    VALUES(%s)
                    RETURNING user_id
                    """,
@@ -132,6 +151,42 @@ def get_category_id(category_name):
     if result[0]==0 :
         return add_category(category_name)
     return result[0] if result else None
+
+def get_categories():
+    cursor.execute("""
+                   SELECT name
+                   FROM Categories
+                   ORDER By name
+                    """)
+    return cursor.fetchall()
+
+def get_saved_by_user(user_id):
+    cursor.execute("""
+                   SELECT ad_id
+                   FROM saved_ads
+                   WHERE user_id =%s
+                   """, (user_id,))
+    return cursor.fetchall()
+
+def users_who_saved(ad_id):
+    cursor.execute("""
+                   SELECT user_id
+                   FROM saved_ads
+                   WHERE user_id =%s
+                   """, (ad_id,))
+    return cursor.fetchall()
+
+def add_ad_in_saved(ad_id, user_id):
+    cursor.execute("""
+                   INSERT INTO saved_ads(ad_id, user_id)
+                   VALUES(%s,%s)
+                   """, (ad_id, user_id))
+    
+def remove_ad_from_saved(ad_id, user_id):
+    cursor.execute("""
+                   DELETE FROM saved_ads
+                   where ad_id = %s and user_id = %s
+                   """, (ad_id, user_id))
 
 def add_location(location_name):
     """Получает идентификатор категории по названию."""
