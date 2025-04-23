@@ -5,6 +5,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 storage = MemoryStorage()
 
 class ViewingAds(StatesGroup):
+    ads = State()
     viewing_ad = State()
     filters = State()
     category = State()
@@ -13,15 +14,15 @@ class ViewingAds(StatesGroup):
     price_max = State()
     saved_ads = State()
 
-class ViewingOwnAds(StatesGroup):
-    viewing_ad = State()
-
+class ProfileStates(StatesGroup):
+    waiting_for_field = State()
 
 class Profile(StatesGroup):
     first_name = State()
     second_name = State()
     phone = State()
     email = State()
+
 
 class Form(StatesGroup):
     email = State()

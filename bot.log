@@ -1,0 +1,82 @@
+2025-04-23 17:57:36,164 - aiogram.dispatcher - INFO - Start polling
+2025-04-23 17:57:36,491 - aiogram.dispatcher - INFO - Run polling for bot @svvv0testbot id=7588331682 - 'svoitest'
+2025-04-23 17:57:37,063 - aiogram.event - INFO - Update id=414406216 is handled. Duration 434 ms by bot id=7588331682
+2025-04-23 17:57:40,882 - aiogram.event - INFO - Update id=414406217 is handled. Duration 129 ms by bot id=7588331682
+2025-04-23 17:57:42,823 - aiogram.event - INFO - Update id=414406218 is handled. Duration 90 ms by bot id=7588331682
+2025-04-23 17:57:50,274 - aiogram.event - INFO - Update id=414406219 is handled. Duration 203 ms by bot id=7588331682
+2025-04-23 17:57:52,022 - aiogram.event - INFO - Update id=414406220 is handled. Duration 106 ms by bot id=7588331682
+2025-04-23 17:57:53,732 - aiogram.event - INFO - Update id=414406221 is handled. Duration 385 ms by bot id=7588331682
+2025-04-23 17:57:54,977 - aiogram.event - INFO - Update id=414406222 is handled. Duration 148 ms by bot id=7588331682
+2025-04-23 17:57:58,031 - aiogram.event - INFO - Update id=414406223 is handled. Duration 205 ms by bot id=7588331682
+2025-04-23 17:58:00,083 - aiogram.event - INFO - Update id=414406224 is handled. Duration 110 ms by bot id=7588331682
+2025-04-23 17:58:02,287 - aiogram.event - INFO - Update id=414406225 is handled. Duration 324 ms by bot id=7588331682
+2025-04-23 17:58:04,075 - aiogram.event - INFO - Update id=414406226 is handled. Duration 181 ms by bot id=7588331682
+2025-04-23 17:58:08,017 - aiogram.event - INFO - Update id=414406227 is handled. Duration 97 ms by bot id=7588331682
+2025-04-23 17:58:09,457 - root - INFO - Displayed ad 0/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:09,458 - aiogram.event - INFO - Update id=414406228 is handled. Duration 132 ms by bot id=7588331682
+2025-04-23 17:58:11,084 - root - INFO - Displayed ad 1/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:11,084 - aiogram.event - INFO - Update id=414406229 is handled. Duration 122 ms by bot id=7588331682
+2025-04-23 17:58:12,283 - root - INFO - Displayed ad 2/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:12,284 - aiogram.event - INFO - Update id=414406230 is handled. Duration 113 ms by bot id=7588331682
+2025-04-23 17:58:21,124 - root - INFO - Displayed ad 3/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:21,125 - aiogram.event - INFO - Update id=414406231 is handled. Duration 110 ms by bot id=7588331682
+2025-04-23 17:58:22,461 - root - INFO - Displayed ad 4/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:22,462 - aiogram.event - INFO - Update id=414406232 is handled. Duration 133 ms by bot id=7588331682
+2025-04-23 17:58:23,735 - root - INFO - Displayed ad 5/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:23,737 - aiogram.event - INFO - Update id=414406233 is handled. Duration 186 ms by bot id=7588331682
+2025-04-23 17:58:24,781 - root - INFO - Displayed ad 6/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:24,782 - aiogram.event - INFO - Update id=414406234 is handled. Duration 187 ms by bot id=7588331682
+2025-04-23 17:58:25,905 - root - INFO - Displayed ad 0/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:25,906 - aiogram.event - INFO - Update id=414406235 is handled. Duration 197 ms by bot id=7588331682
+2025-04-23 17:58:26,982 - root - INFO - Displayed ad 1/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:26,983 - aiogram.event - INFO - Update id=414406236 is handled. Duration 237 ms by bot id=7588331682
+2025-04-23 17:58:29,790 - root - INFO - Displayed ad 1/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:29,791 - aiogram.event - INFO - Update id=414406237 is handled. Duration 395 ms by bot id=7588331682
+2025-04-23 17:58:35,081 - root - INFO - Displayed ad 2/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:35,081 - aiogram.event - INFO - Update id=414406238 is handled. Duration 155 ms by bot id=7588331682
+2025-04-23 17:58:36,258 - root - INFO - Displayed ad 1/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:36,259 - aiogram.event - INFO - Update id=414406239 is handled. Duration 103 ms by bot id=7588331682
+2025-04-23 17:58:37,703 - root - INFO - Displayed ad 0/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:37,703 - aiogram.event - INFO - Update id=414406240 is handled. Duration 115 ms by bot id=7588331682
+2025-04-23 17:58:39,746 - root - INFO - Displayed ad 6/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 17:58:39,747 - aiogram.event - INFO - Update id=414406241 is handled. Duration 115 ms by bot id=7588331682
+2025-04-23 17:59:31,992 - root - INFO - Displayed ad 0/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 1}
+2025-04-23 17:59:31,992 - aiogram.event - INFO - Update id=414406242 is handled. Duration 127 ms by bot id=7588331682
+2025-04-23 17:59:34,060 - root - INFO - Displayed ad 2/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 1}
+2025-04-23 17:59:34,061 - aiogram.event - INFO - Update id=414406243 is handled. Duration 187 ms by bot id=7588331682
+2025-04-23 17:59:38,368 - root - INFO - Displayed ad 3/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 1}
+2025-04-23 17:59:38,368 - aiogram.event - INFO - Update id=414406244 is handled. Duration 266 ms by bot id=7588331682
+2025-04-23 17:59:39,656 - root - INFO - Displayed ad 0/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 1}
+2025-04-23 17:59:39,657 - aiogram.event - INFO - Update id=414406245 is handled. Duration 111 ms by bot id=7588331682
+2025-04-23 17:59:42,524 - root - INFO - Displayed ad 2/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 1}
+2025-04-23 17:59:42,525 - aiogram.event - INFO - Update id=414406246 is handled. Duration 115 ms by bot id=7588331682
+2025-04-23 17:59:44,201 - root - INFO - Displayed ad 3/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 1}
+2025-04-23 17:59:44,202 - aiogram.event - INFO - Update id=414406247 is handled. Duration 188 ms by bot id=7588331682
+2025-04-23 17:59:46,127 - root - INFO - Displayed ad 0/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 1}
+2025-04-23 17:59:46,127 - aiogram.event - INFO - Update id=414406248 is handled. Duration 183 ms by bot id=7588331682
+2025-04-23 18:00:07,463 - root - INFO - Displayed ad 1/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 18:00:07,464 - aiogram.event - INFO - Update id=414406249 is handled. Duration 203 ms by bot id=7588331682
+2025-04-23 18:00:09,043 - root - INFO - Displayed ad 3/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 18:00:09,043 - aiogram.event - INFO - Update id=414406250 is handled. Duration 107 ms by bot id=7588331682
+2025-04-23 18:00:10,261 - root - INFO - Displayed ad 1/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 18:00:10,262 - aiogram.event - INFO - Update id=414406251 is handled. Duration 108 ms by bot id=7588331682
+2025-04-23 18:00:11,530 - root - INFO - Displayed ad 3/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 18:00:11,531 - aiogram.event - INFO - Update id=414406252 is handled. Duration 132 ms by bot id=7588331682
+2025-04-23 18:00:12,773 - root - INFO - Displayed ad 1/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 18:00:12,774 - aiogram.event - INFO - Update id=414406253 is handled. Duration 115 ms by bot id=7588331682
+2025-04-23 18:00:14,740 - root - INFO - Displayed ad 3/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 18:00:14,741 - aiogram.event - INFO - Update id=414406254 is handled. Duration 386 ms by bot id=7588331682
+2025-04-23 18:00:15,947 - root - INFO - Displayed ad 3/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 18:00:15,948 - aiogram.event - INFO - Update id=414406255 is handled. Duration 199 ms by bot id=7588331682
+2025-04-23 18:00:18,349 - root - INFO - Displayed ad 3/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 18:00:18,350 - aiogram.event - INFO - Update id=414406256 is handled. Duration 811 ms by bot id=7588331682
+2025-04-23 18:00:21,037 - root - INFO - Displayed ad 3/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 18:00:21,038 - aiogram.event - INFO - Update id=414406257 is handled. Duration 118 ms by bot id=7588331682
+2025-04-23 18:00:22,381 - root - INFO - Displayed ad 3/7 with filters: {'category': 'не указана', 'city': 'не указан', 'price_min': 'не указана', 'price_max': 'не указана', 'author': 'не указан'}
+2025-04-23 18:00:22,381 - aiogram.event - INFO - Update id=414406258 is handled. Duration 109 ms by bot id=7588331682
+2025-04-23 18:36:20,413 - aiogram.dispatcher - INFO - Start polling
+2025-04-23 18:36:20,813 - aiogram.dispatcher - INFO - Run polling for bot @svvv0testbot id=7588331682 - 'svoitest'
+2025-04-23 18:36:21,499 - aiogram.event - INFO - Update id=414406259 is handled. Duration 530 ms by bot id=7588331682
+2025-04-23 18:36:21,513 - aiogram.event - INFO - Update id=414406260 is handled. Duration 541 ms by bot id=7588331682
+2025-04-23 18:36:25,501 - aiogram.event - INFO - Update id=414406261 is not handled. Duration 25 ms by bot id=7588331682
+2025-04-23 18:36:30,077 - aiogram.event - INFO - Update id=414406262 is not handled. Duration 25 ms by bot id=7588331682
