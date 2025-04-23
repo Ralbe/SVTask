@@ -11,7 +11,7 @@ from utils.stateform import NewAds, CheckMessage, ViewingAds, ProfileStates, Pro
 from DataBase.UserDB import (
     add_category, get_ads, insert_new_ad, get_category_id, get_location_id, close_connection,
     get_user_id_by_tg_id, set_user_data, get_user_data, get_categories, get_saved_by_user,
-    remove_ad_from_saved, add_ad_in_saved, add_location
+    remove_ad_from_saved, add_ad_in_saved, add_location, increment_ad_views, get_statistic
 )
 from keyboards.keyboards import (
     main_kb, ads_kb_if_saved, ads_kb_if_not_saved, confirm_kb, red_kb, back_kb, filter_kb,
@@ -280,6 +280,9 @@ async def display_current_ad(message: Message, state: FSMContext):
 
     data = await state.get_data()
     current_index = data.get("viewing_ad", 0)
+    ad = ads[current_index]
+
+    
     filters = {
         'category': data.get('category', 'не указана'),
         'city': data.get('city', 'не указан'),
@@ -307,6 +310,18 @@ async def display_current_ad(message: Message, state: FSMContext):
         f"<b>Цена</b>: {ad[6]}₽"
     )
     await message.answer(ad_text, reply_markup=ads_kb_if_saved if liked else ads_kb_if_not_saved)
+    # print((ad[0],), "____________________\n\n\n\n\n")
+    if ad[1] != get_user_id_by_tg_id(message.from_user.id):
+        increment_ad_views(ad[0])
+    
+    stats = get_statistic((ad[0],))
+    stats_text = (
+        f"📊 <b>Статистика объявления</b>:\n"
+        f"👁 Просмотры: {stats[0]}\n"
+        f"❤️ Сохранения: {stats[1]}\n"
+        # f"📞 Запросы контактов: {stats[2]}"
+    )
+    await message.answer(stats_text, reply_markup=ads_kb_if_saved if (ad[0],) in data.get("saved_ads", []) else ads_kb_if_not_saved)
     logging.info(f"Displayed ad {current_index}/{len(ads)} with filters: {filters}")
 
 @dp.message(F.text == "Вперед➡️", ViewingAds.viewing_ad)

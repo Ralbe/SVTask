@@ -23,6 +23,13 @@ def get_ads():
     """)
     return cursor.fetchall()
 
+def increment_ad_views(ad_id: int):
+    cursor.execute(
+        "INSERT INTO ad_statistics (ad_id, views) "
+        "VALUES (%s, 1) ON CONFLICT (ad_id) "
+        "DO UPDATE SET views = ad_statistics.views + 1",
+        (ad_id,)
+    )
 
 def get_user_by_email(email):
     """Получает пользователя по email."""
@@ -177,16 +184,46 @@ def users_who_saved(ad_id):
     return cursor.fetchall()
 
 def add_ad_in_saved(ad_id, user_id):
-    cursor.execute("""
-                   INSERT INTO saved_ads(ad_id, user_id)
-                   VALUES(%s,%s)
-                   """, (ad_id, user_id))
+    cursor.execute(
+        """
+        INSERT INTO saved_ads(ad_id, user_id)
+        VALUES(%s,%s)
+        """, (ad_id, user_id))
+    
+    cursor.execute(
+            """
+            UPDATE ad_statistics 
+            SET saves = saves + 1 
+            WHERE ad_id = %s
+            """,
+            (ad_id,)
+        )
     
 def remove_ad_from_saved(ad_id, user_id):
-    cursor.execute("""
-                   DELETE FROM saved_ads
-                   where ad_id = %s and user_id = %s
-                   """, (ad_id, user_id))
+    cursor.execute(
+        """
+        DELETE FROM saved_ads
+        where ad_id = %s and user_id = %s
+        """, (ad_id, user_id))
+    cursor.execute(
+        """
+        UPDATE ad_statistics 
+        SET saves = saves -1 
+        WHERE ad_id = %s
+        """,
+        (ad_id,)
+    )
+
+def get_statistic(ad_id):
+    cursor.execute(
+    """
+    SELECT views, saves, contact_requests
+    FROM ad_statistics
+    WHERE ad_id = %s
+    """,
+    (ad_id,)
+    )
+    return cursor.fetchone()
 
 def add_location(location_name):
     """Получает идентификатор категории по названию."""
