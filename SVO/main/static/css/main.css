@@ -1,0 +1,17 @@
+.main-image {
+    display: block;
+    max-width: 600px;
+    width: 90%;
+    margin: 0 auto;
+    border-radius: 10px;
+  }
+  .description {
+    max-width: 800px;
+    margin: 40px auto;
+    background-color: #0075FF;
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    line-height: 1.5;
+  }

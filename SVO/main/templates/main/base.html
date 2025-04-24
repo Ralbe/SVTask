@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Работа в Ростове-на-Дону</title>
+  <link rel="stylesheet" href="{% static "css/base.css" %}">
+  <link rel="stylesheet" href="{% block style %}{% endblock %}">
+</head>
+<body>
+  <div class="header">
+    <button class="location-button">
+        <img src="{% static "/svg/location-marker.svg" %}"><span class="city">Ростов-На-Дону<span>
+    </button>
+    <div class="user-switcher">
+      <button>Я соискатель</button>
+      <button class="active">Я работодатель</button>
+    </div>
+  </div>
+
+  <div class="nav">
+    <a class="label" href="/">
+        <span class="site-label">
+        Сайт<br>
+        Вакансий<br>
+        Объявлений<span class="red_I">И</span>
+        </span>
+    </a>
+    <div class="menu">
+        {% block nav_active %}
+        {% endblock %}
+    </div>
+    <button class="login-button" onclick="redictRegister()">Войти</button>
+  </div>
+  
+    {% block content %}
+    {% endblock %}
+
+    <script>
+      function redictRegister()
+        {
+            window.location.href = "/register";
+            return false;
+
+        }
+    </script>
+</body>
+</html>
