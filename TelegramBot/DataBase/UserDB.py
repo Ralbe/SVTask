@@ -16,7 +16,7 @@ conn.autocommit = True
 def get_ads():
     """Получает все объявления из базы данных."""
     cursor.execute("""
-        SELECT Ads.ad_id,Ads.user_id, Ads.title, Ads.description, Categories.name, Locations.city, Ads.money
+        SELECT Ads.ad_id,Ads.user_id, Ads.title, Ads.description, Categories.name, Locations.city, Ads.money, Ads.create_date
         FROM Ads
         JOIN Categories ON Ads.category_id = Categories.category_id
         JOIN Locations ON Ads.location_id = Locations.location_id
@@ -155,8 +155,8 @@ def get_category_id(category_name):
                    """,
                    (category_name,))
     result = cursor.fetchone()
-    if result[0]==0 :
-        return add_category(category_name)
+    # if result[0]==0 :
+    #     return add_category(category_name)
     return result[0] if result else None
 
 def get_categories():
@@ -165,6 +165,15 @@ def get_categories():
                    FROM Categories
                    ORDER By name
                     """)
+    return cursor.fetchall()
+
+def get_contact_by_ad_id(ad_id):
+    cursor.execute("""
+                   SELECT firstname, tg_id
+                   FROM Ads join people on ads.user_id = people.user_id 
+                   WHERE ad_id = %s
+                   """,(ad_id,)
+    )
     return cursor.fetchall()
 
 def get_saved_by_user(user_id):
