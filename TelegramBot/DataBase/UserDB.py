@@ -23,6 +23,17 @@ def get_ads():
     """)
     return cursor.fetchall()
 
+def get_ad_by_id(ad_id):
+    """Получает все объявления из базы данных."""
+    cursor.execute("""
+        SELECT Ads.user_id, Ads.title, Ads.description, Categories.name, Locations.city, Ads.money, Ads.create_date
+        FROM Ads
+        JOIN Categories ON Ads.category_id = Categories.category_id
+        JOIN Locations ON Ads.location_id = Locations.location_id
+        WHERE ad_id = %s
+    """, (ad_id,))
+    return cursor.fetchall()
+
 def increment_ad_views(ad_id: int):
     cursor.execute(
         "INSERT INTO ad_statistics (ad_id, views) "
@@ -68,6 +79,16 @@ def get_user_data(tg_id):
         """,(tg_id,)
     )
     return cursor.fetchall()
+
+def get_user_ads(user_id):
+    cursor.execute(
+    """
+    SELECT ad_id
+    FROM ads
+    WHERE user_id = %s
+    """,(user_id,)
+    )
+    return cursor.fetchall()
     
 def set_contact(tg_id, name, number):
     """Добавляет нового пользователя в базу данных."""
@@ -82,17 +103,28 @@ def set_contact(tg_id, name, number):
         (tg_id, name, number))
 
 
-def insert_new_ad(user_id, category_id, location_id, title, description, price):
+def insert_new_ad(user_id, category_id, title, description, price, location_id='1'):
     
-    cursor.execute("SELECT nextval('ads_ad_id_seq')")
-    ad_id = cursor.fetchone()[0]
+    # cursor.execute("SELECT nextval('ads_ad_id_seq')")
+    # ad_id = cursor.fetchone()[0]
     cursor.execute(
         """
-        INSERT INTO Ads (user_id, category_id, location_id, title, description, money)
         VALUES (%s, %s, %s, %s, %s, %s)
         RETURNING ad_id
         """,
-        (user_id, category_id, location_id, title, description, price)
+        (user_id, category_id, location_id, title, description, price, location_id)
+    )
+    ad_id = cursor.fetchone()[0]
+    return ad_id
+
+def update_ad(ad_id, user_id, category_id, title, description, price, location_id='1'):
+    cursor.execute(
+        """
+        UPDATE Ads
+        SET user_id = %s, category_id = %s, title = %s, description = %s, money = %s, location_id = %s
+        WHERE ad_id = %s
+        """,
+        (user_id, category_id, title, description, price, location_id, ad_id)
     )
     return ad_id
 

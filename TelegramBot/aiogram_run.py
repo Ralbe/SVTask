@@ -12,7 +12,7 @@ from DataBase.UserDB import (
     add_category, get_ads, insert_new_ad, get_category_id, get_location_id, close_connection,
     get_user_id_by_tg_id, set_user_data, get_user_data, get_categories, get_saved_by_user,
     remove_ad_from_saved, add_ad_in_saved, add_location, increment_ad_views, get_statistic,
-    get_contact_by_ad_id
+    get_contact_by_ad_id, update_ad, get_ad_by_id, get_user_ads
 )
 from keyboards.keyboards import (
     main_kb, ads_kb_showed, ads_kb_hided, confirm_kb, red_kb, back_kb, filter_kb,
@@ -251,7 +251,8 @@ async def show_ads(message: Message, state: FSMContext):
         saved_ads=get_saved_by_user(get_user_id_by_tg_id(message.from_user.id)),
         ad_msg_id =0,
         stat_msg_id = 0,
-        showed_kb = True
+        showed_kb = True,
+        user_id = get_user_id_by_tg_id(message.from_user.id)
     )
     await state.set_state(ViewingAds.viewing_ad)
     await display_current_ad(message, state)
@@ -322,21 +323,31 @@ async def display_current_ad(message: Message, state: FSMContext):
         current_index = await find_next_filtered_ad(current_index, filters, state, forward=True)
         await state.update_data(viewing_ad=current_index)
 
-    ad = ads[current_index]
+    
     await state.update_data(ad_id = ad[0])
     ad_text = (
         f"<b>Категория</b>: {ad[4]}\n"
         f"<b>Местоположение</b>: {ad[5]}\n"
         f"<b>Заголовок</b>: {ad[2]}\n"
         f"<b>Описание</b>: {ad[3]}\n"
-        f"<b>Цена</b>: {ad[6]}₽"
+        f"<b>Цена</b>: {ad[6]}"
     )
 
-    # print((ad[0],), "____________________\n\n\n\n\n")
-    # print(message.from_user.id, "##############\n\n\n\n")
-    if ad[1] != get_user_id_by_tg_id(message.from_user.id):
+    print((ad[1],), "____________________")
+    print(get_user_id_by_tg_id(message.from_user.id), "##############\n\n")
+    print((ad[0],), "____________________")
+    print(get_user_ads(data.get('user_id')))
+    if (ad[0],) in get_user_ads(data.get('user_id')):
+        your_ad = True
+    else:
         increment_ad_views(ad[0])
+        your_ad = False
     
+    if (ad[0],) in data.get("saved_ads", []):
+        liked_ad = True
+    else: 
+        liked_ad = False
+
     stats = get_statistic((ad[0],))
     stats_text = (
         f"📊 <b>Статистика объявления</b>:\n"
@@ -347,7 +358,7 @@ async def display_current_ad(message: Message, state: FSMContext):
     )
     try:
         await bot.edit_message_text(text = ad_text, chat_id=message.chat.id, message_id = data.get("ad_msg_id"),
-                                    reply_markup = ads_ikb((ad[0],) in data.get("saved_ads", [])))
+                                    reply_markup = ads_ikb(liked_ad, your_ad))
         await bot.edit_message_text(text = stats_text, chat_id=message.chat.id, message_id = data.get("stat_msg_id"),
                                     reply_markup = ads_kb_showed if data.get("showed_kb") else ads_kb_hided)
     except Exception as e:
@@ -359,7 +370,7 @@ async def display_current_ad(message: Message, state: FSMContext):
         if data.get("stat_msg_id"):
             await bot.delete_message(chat_id=message.chat.id,
                           message_id=data.get("stat_msg_id"))
-        ad_msg = await message.answer(ad_text, reply_markup=ads_ikb((ad[0],) in data.get("saved_ads", [])))    
+        ad_msg = await message.answer(ad_text, reply_markup=ads_ikb(liked_ad, your_ad))    
         stat_msg = await message.answer(stats_text, reply_markup = ads_kb_showed if data.get("showed_kb") else ads_kb_hided)
 
         await state.update_data(ad_msg_id = ad_msg.message_id, stat_msg_id = stat_msg.message_id)
@@ -430,6 +441,45 @@ async def get_contact(callback: CallbackQuery, state: FSMContext):
         )
     # await callback.message.answer(f"Вот ссылка на пользователя: {f'[{author_name}](tg://user?id={author_tg_id} )'}")
 
+@dp.callback_query(F.data == "change_ad")
+async def change_ad(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    data = await state.get_data()
+    ad_id = data.get("ad_id")
+    # author_data = get_contact_by_ad_id(ad_id)
+    ad_data = get_ad_by_id(ad_id)[0]
+    # print("\n\n\n",ad_id)
+    # print(author_data, "\n\n\n")
+    # author_name = author_data[0][0]
+    # author_tg_id = author_data[0][1]
+
+    await state.update_data({
+        "ad_id":ad_data[0],
+        "title":ad_data[1],
+        "description":ad_data[2],
+        "category":ad_data[3],
+        # "location":ad_data[4],
+        "money":ad_data[5],
+        "changing_ad":True
+    })
+    print("########",ad_id, "########")
+
+    data = await state.get_data()
+    ad_text = (
+        f"<b>Заголовок</b>: {data['title']}\n"
+        f"<b>Описание</b>: {data['description']}\n"
+        f"<b>Категория</b>: {data['category']}\n"
+        # f"<b>Местоположение</b>: {data['location']}\n"
+        f"<b>Цена</b>: {data['money']}"
+    )
+    await callback.message.answer("Ваше объявление будет выглядеть так:\n\n" + ad_text, reply_markup=confirm_kb)
+    await state.set_state(NewAds.confirm)
+    # await bot.send_message(
+    #     chat_id=callback.message.chat.id,
+    #     text=f"Вот ссылка на пользователя: {f'[{author_name}](tg://user?id={author_tg_id})'}",
+    #     parse_mode="MarkdownV2"
+    #     )
+
 async def show_filters(message: Message, state: FSMContext):
     data = await state.get_data()
     await message.answer(
@@ -463,16 +513,16 @@ async def process_category(message: types.Message, state: FSMContext):
         await message.answer(f"Категория установлена: {message.text}", reply_markup=filter_kb)
         await enter_filter_mode(message, state)
 
-@dp.message(F.text == "🏙️Город")
-async def set_city(message: types.Message, state: FSMContext):
-    await state.set_state(ViewingAds.city)
-    await message.answer("Введите город:", reply_markup=types.ReplyKeyboardRemove())
+# @dp.message(F.text == "🏙️Город")
+# async def set_city(message: types.Message, state: FSMContext):
+#     await state.set_state(ViewingAds.city)
+#     await message.answer("Введите город:", reply_markup=types.ReplyKeyboardRemove())
 
-@dp.message(ViewingAds.city)
-async def process_city(message: types.Message, state: FSMContext):
-    await state.update_data(city=message.text)
-    await message.answer(f"Город установлен: {message.text}", reply_markup=filter_kb)
-    await enter_filter_mode(message, state)
+# @dp.message(ViewingAds.city)
+# async def process_city(message: types.Message, state: FSMContext):
+#     await state.update_data(city=message.text)
+#     await message.answer(f"Город установлен: {message.text}", reply_markup=filter_kb)
+#     await enter_filter_mode(message, state)
 
 @dp.message(F.text == "💰Цена от")
 async def set_price_min(message: types.Message, state: FSMContext):
@@ -511,9 +561,17 @@ async def remove_from_saved_handler(callback: CallbackQuery, state: FSMContext):
         data = await state.get_data()
         ads = get_ads()
         ad = ads[data["viewing_ad"]]
-
+        if (ad[0],) in get_user_ads(get_user_id_by_tg_id(callback.message.from_user.id)):
+            your_ad = True
+        else:
+            your_ad = False
+        
+        if (ad[0],) in data.get("saved_ads", []):
+            liked_ad = True
+        else: 
+            liked_ad = False
         remove_ad_from_saved(ad[0], get_user_id_by_tg_id(callback.message.from_user.id))
-        await callback.message.edit_reply_markup(reply_markup=ads_ikb(False))
+        await callback.message.edit_reply_markup(reply_markup=ads_ikb(liked_ad, your_ad))
         await state.update_data(saved_ads=get_saved_by_user(get_user_id_by_tg_id(callback.message.from_user.id)))
         # await message.answer("Объявление удалено из избранного", reply_markup=ads_kb_hided)
         # await callback.message.delete()
@@ -532,9 +590,17 @@ async def add_in_saved_handler(callback: CallbackQuery, state: FSMContext):
         data = await state.get_data()
         ads = get_ads()
         ad = ads[data["viewing_ad"]]
-
+        if ad[1] == get_user_id_by_tg_id(callback.message.from_user.id):
+            your_ad = True
+        else:
+            your_ad = False
+        
+        if (ad[0],) in data.get("saved_ads", []):
+            liked_ad = True
+        else: 
+            liked_ad = False
         add_ad_in_saved(ad[0], get_user_id_by_tg_id(callback.message.from_user.id))
-        await callback.message.edit_reply_markup(reply_markup=ads_ikb(True))
+        await callback.message.edit_reply_markup(reply_markup=ads_ikb(liked_ad, your_ad))
         await state.update_data(saved_ads=get_saved_by_user(get_user_id_by_tg_id(callback.message.from_user.id)))
         # await message.answer("Объявление удалено из избранного", reply_markup=ads_kb_hided)
         # await callback.message.delete()
@@ -586,26 +652,31 @@ async def show_saved_ads(message: Message, state: FSMContext):
 async def new_ads(message: Message, state: FSMContext):
     await state.clear()
     await state.set_state(NewAds.title)
-    await message.reply("1) Введите название товара")
+    await state.update_data({"changing_ad":False})
+    await message.reply("Введите название товара")
 
 @dp.message(NewAds.title)
 async def process_title(message: Message, state: FSMContext):
     await state.update_data(title=message.text)
-    await message.reply("2) Введите описание товара")
+    await message.reply("Введите описание товара")
     await state.set_state(NewAds.description)
 
 @dp.message(NewAds.description)
 async def process_description(message: Message, state: FSMContext):
     await state.update_data(description=message.text)
-    await message.reply("3) Выберете категорию товара", reply_markup=await category_kb(categories))
+    await message.reply("Выберете категорию товара", reply_markup=await category_kb(categories))
     await state.set_state(NewAds.category)
 
 @dp.message(NewAds.category)
 async def process_category(message: Message, state: FSMContext):
+    # if (message.text,) in categories:
+    #     await state.update_data(category=message.text)
+    #     await message.reply("4) Запишите город в формате: <b>Город</b>")
+    #     await state.set_state(NewAds.location)
     if (message.text,) in categories:
         await state.update_data(category=message.text)
-        await message.reply("4) Запишите город в формате: <b>Город</b>")
-        await state.set_state(NewAds.location)
+        await message.reply("Укажите стоимость")
+        await state.set_state(NewAds.money)
     elif message.text == "❌Назад":
         await show_ads(message, state)
     else:
@@ -613,11 +684,11 @@ async def process_category(message: Message, state: FSMContext):
         await state.set_state(NewAds.category)
     
 
-@dp.message(NewAds.location)
-async def process_location(message: Message, state: FSMContext):
-    await state.update_data(location=message.text)
-    await message.reply("5) Укажите цену")
-    await state.set_state(NewAds.money)
+# @dp.message(NewAds.location)
+# async def process_location(message: Message, state: FSMContext):
+#     await state.update_data(location=message.text)
+#     await message.reply("5) Укажите цену")
+#     await state.set_state(NewAds.money)
 
 @dp.message(NewAds.money)
 async def process_money(message: Message, state: FSMContext):
@@ -629,8 +700,8 @@ async def process_money(message: Message, state: FSMContext):
             f"<b>Заголовок</b>: {data['title']}\n"
             f"<b>Описание</b>: {data['description']}\n"
             f"<b>Категория</b>: {data['category']}\n"
-            f"<b>Местоположение</b>: {data['location']}\n"
-            f"<b>Цена</b>: {price}₽"
+            # f"<b>Местоположение</b>: {data['location']}\n"
+            f"<b>Цена</b>: {price}"
         )
         await message.answer("Ваше объявление будет выглядеть так:\n\n" + ad_text, reply_markup=confirm_kb)
         await state.set_state(NewAds.confirm)
@@ -644,7 +715,7 @@ async def message_okey(message: Message, state: FSMContext):
             data = await state.get_data()
             tg_id = message.from_user.id
             category = data["category"]
-            location = data["location"]
+            # location = data["location"]
             title = data["title"]
             description = data["description"]
             money = data["money"]
@@ -653,14 +724,18 @@ async def message_okey(message: Message, state: FSMContext):
             category_id = get_category_id(category)
             if not category_id:
                 category_id = add_category(category)
-            location_id = get_location_id(location)
-            if not location_id:
-                location_id = add_location(location)
-
-            insert_new_ad(user_id, category_id, location_id, title, description, money)
+            # location_id = get_location_id(location)
+            # if not location_id:
+            #     location_id = add_location(location)
+            print(data["changing_ad"])
+            if data["changing_ad"]:
+                ad_id = data["ad_id"]
+                update_ad(ad_id, user_id, category_id, title, description, money)
+            else:
+                insert_new_ad(user_id, category_id, title, description, money)
             await message.reply("Ваше объявление размещено")
             await state.clear()
-            await handle_menu_command(message, state)
+            handle_main_text(message, state)
         except Exception as e:
             logging.error(f"Error publishing ad: {e}")
             await message.answer("Ошибка при размещении объявления.")
@@ -673,8 +748,8 @@ async def message_okey(message: Message, state: FSMContext):
             f"<b>Заголовок</b>: {data['title']}\n"
             f"<b>Описание</b>: {data['description']}\n"
             f"<b>Категория</b>: {data['category']}\n"
-            f"<b>Местоположение</b>: {data['location']}\n"
-            f"<b>Цена</b>: {data['money']}₽"
+            # f"<b>Местоположение</b>: {data['location']}\n"
+            f"<b>Цена</b>: {data['money']}"
         )
         await message.answer("Ваше объявление будет выглядеть так:\n\n" + ad_text, reply_markup=confirm_kb)
 
@@ -684,7 +759,7 @@ async def select_field_to_edit(message: Message, state: FSMContext):
         "Заголовок": "title",
         "Описание": "description",
         "Категория": "category",
-        "Город": "location",
+        # "Город": "location",
         "Цена": "money",
         "❌Назад": "back"
     }
@@ -700,7 +775,7 @@ async def select_field_to_edit(message: Message, state: FSMContext):
             f"<b>Заголовок</b>: {data['title']}\n"
             f"<b>Описание</b>: {data['description']}\n"
             f"<b>Категория</b>: {data['category']}\n"
-            f"<b>Местоположение</b>: {data['location']}\n"
+            # f"<b>Местоположение</b>: {data['location']}\n"
             f"<b>Цена</b>: {data['money']}₽"
         )
         await message.answer("Ваше объявление:\n\n" + ad_text, reply_markup=confirm_kb)
@@ -711,11 +786,11 @@ async def select_field_to_edit(message: Message, state: FSMContext):
     prompts = {
         "title": "Введите новый заголовок:",
         "description": "Введите новое описание:",
-        "category": "Введите новую категорию:",
-        "location": "Введите новый город в формате: <b>Город</b>:",
+        "category": "Выберите новую категорию:",
+        # "location": "Введите новый город в формате: <b>Город</b>:",
         "money": "Введите новую цену:"
     }
-    await message.answer(prompts[field_name], reply_markup=back_kb)
+    await message.answer(prompts[field_name], reply_markup=back_kb if field_name != 'category' else await category_kb(categories))
     await state.set_state(NewAds.editing_field)
 
 @dp.message(NewAds.editing_field)
@@ -754,8 +829,8 @@ async def process_field_edit(message: Message, state: FSMContext):
         f"<b>Заголовок</b>: {data['title']}\n"
         f"<b>Описание</b>: {data['description']}\n"
         f"<b>Категория</b>: {data['category']}\n"
-        f"<b>Местоположение</b>: {data['location']}\n"
-        f"<b>Цена</b>: {data['money']}₽"
+        # f"<b>Местоположение</b>: {data['location']}\n"
+        f"<b>Цена</b>: {data['money']}"
     )
     await message.answer("Изменения сохранены. Ваше объявление:\n\n" + ad_text, reply_markup=confirm_kb)
 

@@ -22,7 +22,7 @@ main_kb = ReplyKeyboardMarkup(
     input_field_placeholder="Воспользуйтесь меню:"
 )
 
-def ads_ikb(saved, your_ad = False):
+def ads_ikb(saved, your_ad):
     
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
@@ -35,7 +35,7 @@ def ads_ikb(saved, your_ad = False):
 
 
             [InlineKeyboardButton(text="✏️Редактировать" if your_ad else "📱Связаться",
-                                  callback_data="change_ad" if saved else "get_contact")]
+                                  callback_data="change_ad" if your_ad else "get_contact")]
         ]
     )
     return keyboard
@@ -120,7 +120,7 @@ filter_kb = ReplyKeyboardMarkup(
         ],
         [
             KeyboardButton(text="📁Категория"),
-            KeyboardButton(text="🏙️Город")
+            # KeyboardButton(text="🏙️Город")
         ],
         [
             KeyboardButton(text="💰Цена от"),
@@ -136,7 +136,7 @@ red_kb = ReplyKeyboardMarkup(
         [KeyboardButton(text="Заголовок"),
          KeyboardButton(text="Описание")],
         [KeyboardButton(text="Категория"),
-         KeyboardButton(text="Город"),
+        #  KeyboardButton(text="Город"),
          KeyboardButton(text="Цена")]
     ], resize_keyboard=True,
     input_field_placeholder="Воспользуйтесь меню:"
