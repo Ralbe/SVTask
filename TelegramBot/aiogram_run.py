@@ -1,6 +1,6 @@
 import logging
 from aiogram import Bot, Dispatcher, types, F
-from aiogram import BaseMiddleware
+from aiogram.types import InputMediaPhoto
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
@@ -12,7 +12,7 @@ from DataBase.UserDB import (
     add_category, get_ads, insert_new_ad, get_category_id, get_location_id, close_connection,
     get_user_id_by_tg_id, set_user_data, get_user_data, get_categories, get_saved_by_user,
     remove_ad_from_saved, add_ad_in_saved, add_location, increment_ad_views, get_statistic,
-    get_contact_by_ad_id, update_ad, get_ad_by_id, get_user_ads
+    get_contact_by_ad_id, update_ad, get_ad_by_id, get_user_ads, get_ad_photos, add_photo, delete_ad_photos
 )
 from keyboards.keyboards import (
     main_kb, ads_kb_showed, ads_kb_hided, confirm_kb, red_kb, back_kb, filter_kb,
@@ -294,7 +294,7 @@ async def find_next_filtered_ad(current_index: int, filters: dict, state: FSMCon
     return current_index
 
 async def display_current_ad(message: Message, state: FSMContext):
-    
+    print()
     try:
         ads = get_ads()
     except Exception as e:
@@ -305,26 +305,11 @@ async def display_current_ad(message: Message, state: FSMContext):
     data = await state.get_data()
     current_index = data.get("viewing_ad", 0)
     ad = ads[current_index]
-
+    ad_id = ad[0]
     
-    filters = {
-        'category': data.get('category', 'не указана'),
-        'city': data.get('city', 'не указан'),
-        'price_min': data.get('price_min', 'не указана'),
-        'price_max': data.get('price_max', 'не указана'),
-        'author': data.get('author', 'не указан')
-    }
-
-    if not ads:
-        await message.answer("Нет доступных объявлений.")
-        return
-
-    if not await check_ad_filters(ads[current_index], filters, state):
-        current_index = await find_next_filtered_ad(current_index, filters, state, forward=True)
-        await state.update_data(viewing_ad=current_index)
-
+    # Получаем фото для объявления
+    photos = get_ad_photos(ad_id)
     
-    await state.update_data(ad_id = ad[0])
     ad_text = (
         f"<b>Категория</b>: {ad[4]}\n"
         f"<b>Местоположение</b>: {ad[5]}\n"
@@ -333,50 +318,157 @@ async def display_current_ad(message: Message, state: FSMContext):
         f"<b>Цена</b>: {ad[6]}"
     )
 
-    print((ad[1],), "____________________")
-    print(get_user_id_by_tg_id(message.from_user.id), "##############\n\n")
-    print((ad[0],), "____________________")
-    print(get_user_ads(data.get('user_id')))
-    if (ad[0],) in get_user_ads(data.get('user_id')):
-        your_ad = True
-    else:
-        increment_ad_views(ad[0])
-        your_ad = False
+    # Проверяем, является ли объявление пользовательским
+    user_id = data.get('user_id')
+    user_ads = get_user_ads(user_id) or []
+    your_ad = (ad_id,) in user_ads
     
-    if (ad[0],) in data.get("saved_ads", []):
-        liked_ad = True
-    else: 
-        liked_ad = False
+    if not your_ad:
+        increment_ad_views(ad_id)
 
-    stats = get_statistic((ad[0],))
+    liked_ad = (ad_id,) in data.get("saved_ads", [])
+    
+    stats = get_statistic((ad_id,))
+    if stats is None:
+        stats = (0, 0)  # Значения по умолчанию
+
     stats_text = (
         f"📊 <b>Статистика объявления</b>:\n"
         f"📅 Дата создания объявления: {await format_date(ad[7])}\n"
         f"👁 Просмотры: {stats[0]}\n"
         f"❤️ Сохранения: {stats[1]}\n"
-        # f"📞 Запросы контактов: {stats[2]}"
     )
-    try:
-        await bot.edit_message_text(text = ad_text, chat_id=message.chat.id, message_id = data.get("ad_msg_id"),
-                                    reply_markup = ads_ikb(liked_ad, your_ad))
-        await bot.edit_message_text(text = stats_text, chat_id=message.chat.id, message_id = data.get("stat_msg_id"),
-                                    reply_markup = ads_kb_showed if data.get("showed_kb") else ads_kb_hided)
-    except Exception as e:
-        logging.error(f"Failed to change ad text: {e}")
-        # await message.answer("Ошибка при изменении текста сообщений.")
-        if data.get("ad_msg_id"): 
-            await bot.delete_message(chat_id=message.chat.id,
-                          message_id=data.get("ad_msg_id"))
-        if data.get("stat_msg_id"):
-            await bot.delete_message(chat_id=message.chat.id,
-                          message_id=data.get("stat_msg_id"))
+    
+    # try:
+        # if photos:
+        #     # Отправляем фото с подписью
+        #     media = [InputMediaPhoto(media=photos[0], caption=ad_text)]
+        #     # Добавляем остальные фото
+        #     media.extend([InputMediaPhoto(media=photo) for photo in photos[1:]])
+            
+        #     # Удаляем старые сообщения если они есть
+        #     if data.get("ad_msg_id"):
+        #         await bot.delete_message(chat_id=message.chat.id, message_id=data.get("ad_msg_id"))
+        #     if data.get("photo_group_id"):
+        #         await bot.delete_message(chat_id=message.chat.id, message_id=data.get("photo_group_id"))
+        #     if data.get("stat_msg_id"):
+        #         await bot.delete_message(chat_id=message.chat.id, message_id=data.get("stat_msg_id"))
+            
+        #     # Отправляем группу фото
+        #     sent_messages = await bot.send_media_group(chat_id=message.chat.id, media=media)
+        #     photo_group_id = sent_messages[0].message_id
+            
+        #     # Отправляем статистику и кнопки
+        #     stat_msg = await message.answer(stats_text, reply_markup=ads_kb_showed if data.get("showed_kb") else ads_kb_hided)
+        #     buttons_msg = await message.answer("Действия:", reply_markup=ads_ikb(liked_ad, your_ad))
+            
+        #     await state.update_data(
+        #         photo_group_id=photo_group_id,
+        #         stat_msg_id=stat_msg.message_id,
+        #         ad_msg_id=buttons_msg.message_id
+        #     )
+        # else:
+        #     # Старая логика для объявлений без фото
+        #     await bot.edit_message_text(text=stats_text, chat_id=message.chat.id, 
+        #                               message_id=data.get("stat_msg_id"),
+        #                               reply_markup=ads_kb_showed if data.get("showed_kb") else ads_kb_hided)
+        #     await bot.edit_message_text(text=ad_text, chat_id=message.chat.id, 
+        #                               message_id=data.get("ad_msg_id"),
+        #                               reply_markup=ads_ikb(liked_ad, your_ad))
+    # except Exception as e:
+        # logging.error(f"Failed to change ad text: {e}")
+        # Удаляем старые сообщения если они есть
+    if data.get("ad_msg_id"):
+        await bot.delete_message(chat_id=message.chat.id, message_id=data.get("ad_msg_id"))
+    if data.get("stat_msg_id"):
+        await bot.delete_message(chat_id=message.chat.id, message_id=data.get("stat_msg_id"))
+    if data.get("photo_group_id"):
+        await bot.delete_message(chat_id=message.chat.id, message_id=data.get("photo_group_id"))
+    
+    if photos:
+        media = [InputMediaPhoto(media=photos[0], caption=ad_text)]
+        media.extend([InputMediaPhoto(media=photo) for photo in photos[1:]])
+        sent_messages = await bot.send_media_group(chat_id=message.chat.id, media=media)
+        photo_group_id = sent_messages[0].message_id
+        buttons_msg = await message.answer("Действия:", reply_markup=ads_ikb(liked_ad, your_ad))
+        stat_msg = await message.answer(stats_text, reply_markup=ads_kb_showed if data.get("showed_kb") else ads_kb_hided)
+        
+        await state.update_data(
+            photo_group_id=photo_group_id,
+            stat_msg_id=stat_msg.message_id,
+            ad_msg_id=buttons_msg.message_id
+        )
+    else:
         ad_msg = await message.answer(ad_text, reply_markup=ads_ikb(liked_ad, your_ad))    
-        stat_msg = await message.answer(stats_text, reply_markup = ads_kb_showed if data.get("showed_kb") else ads_kb_hided)
+        stat_msg = await message.answer(stats_text, reply_markup=ads_kb_showed if data.get("showed_kb") else ads_kb_hided)
+        await state.update_data(
+            ad_msg_id=ad_msg.message_id, 
+            stat_msg_id=stat_msg.message_id,
+            photo_group_id=None
+        )
 
-        await state.update_data(ad_msg_id = ad_msg.message_id, stat_msg_id = stat_msg.message_id)
+@dp.message(NewAds.change, F.text == "Фотографии")
+async def edit_photos(message: Message, state: FSMContext):
+    data = await state.get_data()
+    photos = data.get("photos", [])
+    
+    if not photos:
+        text = "У этого объявления пока нет фото. Хотите добавить?"
+    else:
+        text = f"Сейчас прикреплено {len(photos)} фото. Что вы хотите сделать?"
+    
+    await message.answer(text, 
+                       reply_markup=ReplyKeyboardMarkup(
+                           keyboard=[
+                               [KeyboardButton(text="Добавить фото"), KeyboardButton(text="Удалить все фото")],
+                               [KeyboardButton(text="❌Назад")]
+                           ],
+                           resize_keyboard=True
+                       ))
+    await state.set_state(NewAds.edit_photos)
+
+@dp.message(NewAds.edit_photos, F.text == "Добавить фото")
+async def add_more_photos(message: Message, state: FSMContext):
+    data = await state.get_data()
+    current_count = len(data.get("photos", []))
+    remaining = 10 - current_count
+    
+    if remaining <= 0:
+        await message.answer("Достигнут лимит в 10 фото. Удалите некоторые фото чтобы добавить новые.")
         return
+    
+    await message.answer(f"Пришлите до {remaining} фото. Когда закончите, нажмите 'Готово'", 
+                        reply_markup=ReplyKeyboardMarkup(
+                            keyboard=[[KeyboardButton(text="Готово")]],
+                            resize_keyboard=True
+                        ))
+    await state.set_state(NewAds.add_more_photos)
 
-    logging.info(f"Displayed ad {current_index}/{len(ads)} with filters: {filters}")
+@dp.message(NewAds.add_more_photos, F.photo)
+async def process_additional_photo(message: Message, state: FSMContext):
+    data = await state.get_data()
+    photos = data.get("photos", [])
+    
+    if len(photos) >= 10:
+        await message.answer("Максимальное количество фото - 10. Нажмите 'Готово' чтобы продолжить.")
+        return
+    
+    largest_photo = message.photo[-1]
+    photos.append(largest_photo.file_id)
+    
+    await state.update_data(photos=photos)
+    remaining = 10 - len(photos)
+    await message.answer(f"Фото добавлено. Осталось {remaining} фото. Пришлите еще или нажмите 'Готово'.")
+
+@dp.message(NewAds.add_more_photos, F.text == "Готово")
+async def finish_additional_photos(message: Message, state: FSMContext):
+    await show_ad_preview(message, state)
+
+@dp.message(NewAds.edit_photos, F.text == "Удалить все фото")
+async def remove_all_photos(message: Message, state: FSMContext):
+    await state.update_data(photos=[])
+    await message.answer("Все фото удалены.", reply_markup=red_kb)
+    await state.set_state(NewAds.change)
 
 @dp.callback_query(F.data == "next_ad")
 async def next_ad(callback: CallbackQuery, state: FSMContext):
@@ -390,16 +482,14 @@ async def next_ad(callback: CallbackQuery, state: FSMContext):
         'price_max': data.get('price_max', 'не указана'),
         'author': data.get('author', 'не указан')
     }
-
-    print()
     new_index = await find_next_filtered_ad(current_index, filters, state, forward=True)
     await state.update_data(viewing_ad=new_index)
+    await display_current_ad(callback.message, state)
     # await callback.message.delete()
     # await bot.delete_message(chat_id=callback.message.chat.id,
     #                     message_id=callback.message.message_id+1)
     
     # await state.update_data(ad_msg_id = callback.message.message_id, stat_msg_id = callback.message.message_id+1)
-    await display_current_ad(callback.message, state)
 
 @dp.callback_query(F.data == "prev_ad")
 async def prev_ad(callback: CallbackQuery, state: FSMContext):
@@ -431,9 +521,11 @@ async def get_contact(callback: CallbackQuery, state: FSMContext):
 
     # print("\n\n\n",ad_id)
     # print(author_data, "\n\n\n")
-    author_name = author_data[0][0]
-    author_tg_id = author_data[0][1]
-
+    try:
+        author_name = author_data[0][0]
+        author_tg_id = author_data[0][1]
+    except Exception as e:
+        await callback.message.answer("Ошибка, попробуйте позже")
     await bot.send_message(
         chat_id=callback.message.chat.id,
         text=f"Вот ссылка на пользователя: {f'[{author_name}](tg://user?id={author_tg_id})'}",
@@ -446,39 +538,23 @@ async def change_ad(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     data = await state.get_data()
     ad_id = data.get("ad_id")
-    # author_data = get_contact_by_ad_id(ad_id)
     ad_data = get_ad_by_id(ad_id)[0]
-    # print("\n\n\n",ad_id)
-    # print(author_data, "\n\n\n")
-    # author_name = author_data[0][0]
-    # author_tg_id = author_data[0][1]
-
+    
+    # Получаем текущие фото объявления
+    photos = get_ad_photos(ad_id)
+    
     await state.update_data({
-        "ad_id":ad_data[0],
-        "title":ad_data[1],
-        "description":ad_data[2],
-        "category":ad_data[3],
-        # "location":ad_data[4],
-        "money":ad_data[5],
-        "changing_ad":True
+        "ad_id": ad_data[0],
+        "title": ad_data[1],
+        "description": ad_data[2],
+        "category": ad_data[3],
+        "money": ad_data[5],
+        "photos": photos,  # Сохраняем текущие фото
+        "changing_ad": True
     })
-    print("########",ad_id, "########")
-
-    data = await state.get_data()
-    ad_text = (
-        f"<b>Заголовок</b>: {data['title']}\n"
-        f"<b>Описание</b>: {data['description']}\n"
-        f"<b>Категория</b>: {data['category']}\n"
-        # f"<b>Местоположение</b>: {data['location']}\n"
-        f"<b>Цена</b>: {data['money']}"
-    )
-    await callback.message.answer("Ваше объявление будет выглядеть так:\n\n" + ad_text, reply_markup=confirm_kb)
+    
+    await show_ad_preview(callback.message, state)
     await state.set_state(NewAds.confirm)
-    # await bot.send_message(
-    #     chat_id=callback.message.chat.id,
-    #     text=f"Вот ссылка на пользователя: {f'[{author_name}](tg://user?id={author_tg_id})'}",
-    #     parse_mode="MarkdownV2"
-    #     )
 
 async def show_filters(message: Message, state: FSMContext):
     data = await state.get_data()
@@ -554,63 +630,64 @@ async def process_price_max(message: types.Message, state: FSMContext):
         await message.answer("Пожалуйста, введите число!")
     await enter_filter_mode(message, state)
 
-@dp.callback_query(F.data == "remove_from_saved")
-async def remove_from_saved_handler(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
+@dp.callback_query(F.data.in_(["remove_from_saved", "add_in_saved"]))
+async def handle_saved_actions(callback: CallbackQuery, state: FSMContext):
     try:
-        data = await state.get_data()
-        ads = get_ads()
-        ad = ads[data["viewing_ad"]]
-        if (ad[0],) in get_user_ads(get_user_id_by_tg_id(callback.message.from_user.id)):
-            your_ad = True
-        else:
-            your_ad = False
-        
-        if (ad[0],) in data.get("saved_ads", []):
-            liked_ad = True
-        else: 
-            liked_ad = False
-        remove_ad_from_saved(ad[0], get_user_id_by_tg_id(callback.message.from_user.id))
-        await callback.message.edit_reply_markup(reply_markup=ads_ikb(liked_ad, your_ad))
-        await state.update_data(saved_ads=get_saved_by_user(get_user_id_by_tg_id(callback.message.from_user.id)))
-        # await message.answer("Объявление удалено из избранного", reply_markup=ads_kb_hided)
-        # await callback.message.delete()
-        # await bot.delete_message(chat_id=callback.message.chat.id,
-        #                        message_id=callback.message.message_id+1)
-        # await state.update_data(ad_msg_id = callback.message.message_id, stat_msg_id = callback.message.message_id+1)
-        await display_current_ad(callback.message, state)
-    except Exception as e:
-        logging.error(f"Error removing from saved: {e}")
-        await callback.message.answer("Ошибка при Добавлении или удалении избранного.")
+        # 1. Получаем данные
+        user_id = get_user_id_by_tg_id(callback.from_user.id)
+        if not user_id:
+            await callback.answer("❌ Пользователь не найден", show_alert=True)
+            return
 
-@dp.callback_query(F.data == "add_in_saved")
-async def add_in_saved_handler(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
-    try:
         data = await state.get_data()
-        ads = get_ads()
-        ad = ads[data["viewing_ad"]]
-        if ad[1] == get_user_id_by_tg_id(callback.message.from_user.id):
-            your_ad = True
-        else:
-            your_ad = False
-        
-        if (ad[0],) in data.get("saved_ads", []):
-            liked_ad = True
-        else: 
+        ad_id = data.get("ad_id")
+        if not ad_id:
+            await callback.answer("❌ Объявление не найдено", show_alert=True)
+            return
+
+        # 2. Выполняем действие
+        if callback.data == "remove_from_saved":
+            remove_ad_from_saved(ad_id, user_id)
             liked_ad = False
-        add_ad_in_saved(ad[0], get_user_id_by_tg_id(callback.message.from_user.id))
-        await callback.message.edit_reply_markup(reply_markup=ads_ikb(liked_ad, your_ad))
-        await state.update_data(saved_ads=get_saved_by_user(get_user_id_by_tg_id(callback.message.from_user.id)))
-        # await message.answer("Объявление удалено из избранного", reply_markup=ads_kb_hided)
-        # await callback.message.delete()
-        # await bot.delete_message(chat_id=callback.message.chat.id,
-        #                        message_id=callback.message.message_id+1)
-        # await state.update_data(ad_msg_id = callback.message.message_id, stat_msg_id = callback.message.message_id+1)
+        else:
+            add_ad_in_saved(ad_id, user_id)
+            liked_ad = True
+
+        # 3. Обновляем состояние
+        try:
+            saved_ads = get_saved_by_user(user_id) or []
+            await state.update_data(saved_ads=saved_ads)
+        except Exception as e:
+            logging.error(f"Ошибка обновления состояния: {e}")
+
+        # 4. Обновляем интерфейс
+        your_ad = (ad_id,) in (get_user_ads(user_id) or [])
+        try:
+            stats = get_statistic((ad_id))
+            data = await state.get_data()
+            ad = get_ad_by_id(ad_id)
+            stats_text = (
+                f"📊 <b>Статистика объявления</b>:\n"
+                f"📅 Дата создания объявления: {await format_date(ad[6])}\n"
+                f"👁 Просмотры: {stats[0]}\n"
+                f"❤️ Сохранения: {stats[1]}\n"
+                # f"📞 Запросы контактов: {stats[2]}"
+    )
+            # await bot.edit_message_text(text = stats_text, chat_id=callback.message.chat.id, message_id = callback.message.message_id+1,
+            #                             reply_markup = ads_kb_showed if data.get("showed_kb") else ads_kb_hided)
+            # await bot.edit_message_reply_markup(message_id=callback.message.message_id+1, reply_markup = ads_kb_showed if data.get("showed_kb") else ads_kb_hided)
+            await callback.message.edit_reply_markup(
+                reply_markup=ads_ikb(liked_ad, your_ad)
+            )
+        except Exception as e:
+            logging.error(f"Ошибка обновления интерфейса: {e}")
+            # await callback.answer("✅ Обновлено")
+            
         await display_current_ad(callback.message, state)
+
     except Exception as e:
-        logging.error(f"Error removing from saved: {e}")
-        await callback.message.answer("Ошибка при Добавлении или удалении избранного.")
+        logging.error(f"Ошибка в обработке избранного: {e}")
+        await callback.answer("❌ Ошибка при обработке запроса", show_alert=True)
 
 @dp.message(F.text == "❌Сбросить фильтры")
 async def finish_filters(message: types.Message, state: FSMContext):
@@ -632,6 +709,18 @@ async def show_own_ads(message: Message, state: FSMContext):
         only_saved=False
     )
     await state.set_state(ViewingAds.viewing_ad)
+    data = await state.get_data()
+    filters = {
+        'category': data.get('category', 'не указана'),
+        'city': data.get('city', 'не указан'),
+        'price_min': data.get('price_min', 'не указана'),
+        'price_max': data.get('price_max', 'не указана'),
+        'author': get_user_id_by_tg_id(message.from_user.id)
+    }
+
+    print()
+    new_index = await find_next_filtered_ad(0, filters, state, forward=True)
+    await state.update_data(viewing_ad=new_index)
     await display_current_ad(message, state)
 
 @dp.message(F.text == "Сохраненные объявления")
@@ -691,67 +780,118 @@ async def process_category(message: Message, state: FSMContext):
 #     await state.set_state(NewAds.money)
 
 @dp.message(NewAds.money)
+@dp.message(NewAds.money)
 async def process_money(message: Message, state: FSMContext):
     try:
         price = int(message.text)
         await state.update_data(money=price)
-        data = await state.get_data()
-        ad_text = (
-            f"<b>Заголовок</b>: {data['title']}\n"
-            f"<b>Описание</b>: {data['description']}\n"
-            f"<b>Категория</b>: {data['category']}\n"
-            # f"<b>Местоположение</b>: {data['location']}\n"
-            f"<b>Цена</b>: {price}"
-        )
-        await message.answer("Ваше объявление будет выглядеть так:\n\n" + ad_text, reply_markup=confirm_kb)
-        await state.set_state(NewAds.confirm)
+        await message.answer("Теперь пришлите фотографии товара (до 10 штук). Когда закончите, нажмите 'Готово'", 
+                           reply_markup=ReplyKeyboardMarkup(
+                               keyboard=[[KeyboardButton(text="Готово")]],
+                               resize_keyboard=True
+                           ))
+        await state.update_data(photos=[])  # Инициализируем пустой список фото
+        await state.set_state(NewAds.photos)
     except ValueError:
         await message.reply("Пожалуйста, введите число!")
+
+@dp.message(NewAds.photos, F.photo)
+async def process_photo(message: Message, state: FSMContext):
+    data = await state.get_data()
+    photos = data.get("photos", [])
+    
+    if len(photos) >= 10:
+        await message.answer("Максимальное количество фото - 10. Нажмите 'Готово' чтобы продолжить.")
+        return
+    
+    # Сохраняем file_id самого большого доступного размера фото
+    largest_photo = message.photo[-1]
+    photos.append(largest_photo.file_id)
+    
+    await state.update_data(photos=photos)
+    remaining = 10 - len(photos)
+    await message.answer(f"Фото добавлено. Осталось {remaining} фото. Пришлите еще или нажмите 'Готово'.")
+
+@dp.message(NewAds.photos, F.text == "Готово")
+async def finish_photos(message: Message, state: FSMContext):
+    data = await state.get_data()
+    photos = data.get("photos", [])
+    
+    if not photos:
+        await message.answer("Вы не добавили ни одного фото. Хотите продолжить без фото?", 
+                           reply_markup=ReplyKeyboardMarkup(
+                               keyboard=[
+                                   [KeyboardButton(text="Да"), KeyboardButton(text="Добавить фото")]
+                               ],
+                               resize_keyboard=True
+                           ))
+        return
+    
+    await show_ad_preview(message, state)
+
+async def show_ad_preview(message: Message, state: FSMContext):
+    data = await state.get_data()
+    ad_text = (
+        f"<b>Заголовок</b>: {data['title']}\n"
+        f"<b>Описание</b>: {data['description']}\n"
+        f"<b>Категория</b>: {data['category']}\n"
+        f"<b>Цена</b>: {data['money']}"
+    )
+    
+    photos = data.get("photos", [])
+    
+    if photos:
+        # Отправляем первое фото с подписью и кнопками
+        media = [InputMediaPhoto(media=photos[0], caption=ad_text)]
+        # Добавляем остальные фото без подписи
+        media.extend([InputMediaPhoto(media=photo) for photo in photos[1:]])
+        
+        await message.answer_media_group(media=media)
+        await message.answer("Ваше объявление будет выглядеть так:", reply_markup=confirm_kb)
+    else:
+        await message.answer("Ваше объявление будет выглядеть так:\n\n" + ad_text, reply_markup=confirm_kb)
+    
+    await state.set_state(NewAds.confirm)
 
 @dp.message(NewAds.confirm)
 async def message_okey(message: Message, state: FSMContext):
     if message.text == "✅Разместить":
-        try:
+        # try:
             data = await state.get_data()
             tg_id = message.from_user.id
             category = data["category"]
-            # location = data["location"]
             title = data["title"]
             description = data["description"]
             money = data["money"]
+            photos = data.get("photos", [])
 
             user_id = get_user_id_by_tg_id(tg_id)
             category_id = get_category_id(category)
             if not category_id:
                 category_id = add_category(category)
-            # location_id = get_location_id(location)
-            # if not location_id:
-            #     location_id = add_location(location)
-            print(data["changing_ad"])
+
             if data["changing_ad"]:
                 ad_id = data["ad_id"]
                 update_ad(ad_id, user_id, category_id, title, description, money)
+                # Удаляем старые фото
+                delete_ad_photos(ad_id)
             else:
-                insert_new_ad(user_id, category_id, title, description, money)
-            await message.reply("Ваше объявление размещено")
+                ad_id = insert_new_ad(user_id, category_id, title, description, money)
+
+            # Сохраняем новые фото
+            for photo in photos:
+                try:
+                    add_photo(ad_id, photo)
+                except Exception as e:
+                    logging.error(f"Ошибка при сохранении фото: {e}")
+                    continue
+
+            await message.reply("✅ Ваше объявление размещено", reply_markup=main_kb)
             await state.clear()
-            handle_main_text(message, state)
-        except Exception as e:
-            logging.error(f"Error publishing ad: {e}")
-            await message.answer("Ошибка при размещении объявления.")
-    elif message.text == "✍️Редактировать":
-        await state.set_state(NewAds.change)
-        await message.answer("Какую информацию вы хотите изменить?", reply_markup=red_kb)
-    else:
-        data = await state.get_data()
-        ad_text = (
-            f"<b>Заголовок</b>: {data['title']}\n"
-            f"<b>Описание</b>: {data['description']}\n"
-            f"<b>Категория</b>: {data['category']}\n"
-            # f"<b>Местоположение</b>: {data['location']}\n"
-            f"<b>Цена</b>: {data['money']}"
-        )
-        await message.answer("Ваше объявление будет выглядеть так:\n\n" + ad_text, reply_markup=confirm_kb)
+            await handle_main_text(message, state)
+        # except Exception as e:
+            # logging.error(f"Error publishing ad: {e}")
+            # await message.answer("❌ Ошибка при размещении объявления. Попробуйте позже.")
 
 @dp.message(NewAds.change)
 async def select_field_to_edit(message: Message, state: FSMContext):

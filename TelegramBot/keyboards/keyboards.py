@@ -16,8 +16,8 @@ start_kb = ReplyKeyboardMarkup(
 main_kb = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text='🕶Объявления'), KeyboardButton(text='📋Вакансии')],
-        [KeyboardButton(text='👤Профиль'),
-         KeyboardButton(text='🚪Выйти с аккаунта')]
+        [KeyboardButton(text='👤Профиль')]#,
+         #KeyboardButton(text='🚪Выйти с аккаунта')]
         ], resize_keyboard=True, one_time_keyboard=True,
     input_field_placeholder="Воспользуйтесь меню:"
 )
@@ -134,10 +134,11 @@ filter_kb = ReplyKeyboardMarkup(
 red_kb = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="Заголовок"),
-         KeyboardButton(text="Описание")],
-        [KeyboardButton(text="Категория"),
-        #  KeyboardButton(text="Город"),
-         KeyboardButton(text="Цена")]
+         KeyboardButton(text="Описание"),
+         KeyboardButton(text="Категория")],
+        [KeyboardButton(text="Город"),
+         KeyboardButton(text="Цена"),
+         KeyboardButton(text="🕶Объявления")]
     ], resize_keyboard=True,
     input_field_placeholder="Воспользуйтесь меню:"
     )

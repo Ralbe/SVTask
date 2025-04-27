@@ -109,10 +109,11 @@ def insert_new_ad(user_id, category_id, title, description, price, location_id='
     # ad_id = cursor.fetchone()[0]
     cursor.execute(
         """
+        INSERT INTO ads(user_id, category_id, title, description, money, location_id)
         VALUES (%s, %s, %s, %s, %s, %s)
         RETURNING ad_id
         """,
-        (user_id, category_id, location_id, title, description, price, location_id)
+        (user_id, category_id, title, description, price, location_id)
     )
     ad_id = cursor.fetchone()[0]
     return ad_id
@@ -255,16 +256,18 @@ def remove_ad_from_saved(ad_id, user_id):
         (ad_id,)
     )
 
-def get_statistic(ad_id):
-    cursor.execute(
-    """
-    SELECT views, saves, contact_requests
-    FROM ad_statistics
-    WHERE ad_id = %s
-    """,
-    (ad_id,)
-    )
-    return cursor.fetchone()
+def get_statistic(ad_id: tuple) -> tuple:
+    """Возвращает статистику объявления: (просмотры, сохранения)"""
+    try:
+        cursor.execute(
+            "SELECT views, saves FROM ads WHERE ad_id = %s",
+            (ad_id[0],)
+        )
+        result = cursor.fetchone()
+        return result if result else (0, 0)  # Возвращаем значения по умолчанию
+    except Exception as e:
+        # logging.error(f"Error in get_statistic: {e}")
+        return (0, 0)  # Возвращаем значения по умолчанию при ошибке
 
 def add_location(location_name):
     """Получает идентификатор категории по названию."""
@@ -292,6 +295,25 @@ def get_location_id(location_name):
         return add_location(location_name)
     return result[0] if result else None
 
+def add_photo(ad_id: int, file_id: str):
+    """Добавляет фотографию к объявлению"""
+
+    cursor.execute(
+        "INSERT INTO ad_photos (ad_id, file_id) VALUES (%s, %s) RETURNING photo_id",
+                (ad_id, file_id)  # Убедитесь, что передается кортеж из 2 элементов
+    )
+    return cursor.fetchone()[0]
+
+def get_ad_photos(ad_id: int) -> list:
+    """Возвращает список фотографий для объявления"""
+
+    cursor.execute("SELECT file_id FROM ad_photos WHERE ad_id = %s ORDER BY photo_id", (ad_id,))
+    return [row[0] for row in cursor.fetchall()]
+
+def delete_ad_photos(ad_id: int):
+    """Удаляет все фотографии объявления"""
+
+    cursor.execute("DELETE FROM ad_photos WHERE ad_id = %s", (ad_id,))
 
 def close_connection():
     """Закрывает соединение с базой данных."""
