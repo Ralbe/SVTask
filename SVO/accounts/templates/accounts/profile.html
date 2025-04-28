@@ -1,0 +1,15 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block style %}
+{% static "css/profile.css" %}
+{% endblock style %}
+
+
+{% block content %}
+    <h3>Профиль</h3>    
+    <h4>Имя: {{ user.username }}</h4>
+    <h4>Почта: {{ user.email }}</h4>
+    <a href="{% url 'logout' %}" class="logout">Выйти</a>
+{% endblock content %}

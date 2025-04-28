@@ -31,18 +31,30 @@
         {% block nav_active %}
         {% endblock %}
     </div>
+    
+    {% if user.username %}
+    <button class="login-button" onclick="redictProfile()">Профиль: {{ user.username }}</button>
+    {% else %}
     <button class="login-button" onclick="redictRegister()">Войти</button>
+    {% endif %}
+   
+
   </div>
-  
+  <div class="content">
     {% block content %}
     {% endblock %}
+  </div>
 
     <script>
       function redictRegister()
         {
-            window.location.href = "/register";
+            window.location.href = "{% url 'login' %}";
             return false;
-
+        }
+        function redictProfile()
+        {
+            window.location.href = "{% url 'profile' %}";
+            return false;
         }
     </script>
 </body>

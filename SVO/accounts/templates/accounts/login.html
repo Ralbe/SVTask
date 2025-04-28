@@ -1,0 +1,20 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block style %}
+{% static "css/register.css" %}
+{% endblock style %}
+
+
+{% block content %}
+<form method="post">
+    <h3>Авторизация</h3>
+    {% csrf_token %}
+    
+    {{ form.as_p }}
+    <button type="submit">Авторизоваться</button>
+    <a href="{% url 'register' %}">Нет с нами? Зарегистрируйтесь</a>
+</form>
+
+{% endblock content %}

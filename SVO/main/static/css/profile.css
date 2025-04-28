@@ -1,0 +1,24 @@
+.logout {
+    margin-top: 20px;
+    color: rgb(0, 117, 255);
+    transition: color 0.15s ease-in-out;
+}
+
+.logout:hover{
+    color: rgb(175, 11, 82)
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+h3 {
+    font-size: 40px
+}
+
+h4 {
+    font-size: 32px;
+}
