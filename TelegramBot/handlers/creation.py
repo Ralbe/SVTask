@@ -117,21 +117,21 @@ async def message_okey(message: types.Message, state: FSMContext):
             money = data["money"]
             photos = data.get("photos", [])
 
-            user_id = get_user_id_by_tg_id(tg_id)
-            category_id = get_category_id(category)
+            user_id = await get_user_id_by_tg_id(tg_id)
+            category_id = await get_category_id(category)
             if not category_id:
-                category_id = add_category(category)
+                category_id = await add_category(category)
 
             if data["changing_ad"]:
                 ad_id = data["ad_id"]
-                update_ad(ad_id, user_id, category_id, title, description, money)
-                delete_ad_photos(ad_id)
+                await update_ad(ad_id, user_id, category_id, title, description, money)
+                await delete_ad_photos(ad_id)
             else:
-                ad_id = insert_new_ad(user_id, category_id, title, description, money)
+                ad_id = await insert_new_ad(user_id, category_id, title, description, money)
 
             for photo in photos:
                 try:
-                    add_photo(ad_id, photo)
+                    await add_photo(ad_id, photo)
                 except Exception as e:
                     logging.error(f"Ошибка при сохранении фото: {e}")
                     continue

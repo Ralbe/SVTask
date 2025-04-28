@@ -44,7 +44,7 @@ async def profile_command(message: types.Message, state: FSMContext):
     """Обработчик входа в режим профиля"""
     try:
         # Загружаем данные пользователя из БД
-        db_data = get_user_data(message.from_user.id)
+        db_data = await get_user_data(message.from_user.id)
         
         if not db_data or not db_data[0]:
             await message.answer("Профиль не найден. Давайте создадим его!")
@@ -121,7 +121,7 @@ async def save_profile_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
     
     try:
-        set_user_data(
+        await set_user_data(
             first_name=data.get("first_name"),
             second_name=data.get("second_name"),
             email=data.get("email"),

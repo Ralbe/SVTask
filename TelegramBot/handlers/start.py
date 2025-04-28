@@ -9,8 +9,8 @@ import logging
 async def handle_menu_command(message: types.Message, state: FSMContext):
     await state.clear()
     try:
-        get_user_id_by_tg_id(message.from_user.id)
-        data = get_user_data(message.from_user.id)
+        await get_user_id_by_tg_id(message.from_user.id)
+        data = await get_user_data(message.from_user.id)
         await state.update_data({
             "first_name": data[0][0],
             "second_name": data[0][1],

@@ -18,11 +18,11 @@ async def show_ads(message: Message, state: FSMContext):
         viewing_ad=0,
         author='не указан',
         only_saved=False,
-        saved_ads=get_saved_by_user(get_user_id_by_tg_id(message.from_user.id)),
+        saved_ads=await get_saved_by_user(await get_user_id_by_tg_id(message.from_user.id)),
         ad_msg_id =0,
         stat_msg_id = 0,
         showed_kb = True,
-        user_id = get_user_id_by_tg_id(message.from_user.id)
+        user_id = await get_user_id_by_tg_id(message.from_user.id)
     )
     await state.set_state(ViewingAds.viewing_ad)
     await display_current_ad(message, state)
@@ -50,7 +50,7 @@ async def check_ad_filters(ad: tuple, filters: dict, state: FSMContext) -> bool:
 
 
 async def find_next_filtered_ad(current_index: int, filters: dict, state: FSMContext, forward: bool = True) -> int:
-    ads = get_ads()
+    ads = await get_ads()
     if not ads:
         return -1
     step = 1 if forward else -1
@@ -69,7 +69,7 @@ async def find_next_filtered_ad(current_index: int, filters: dict, state: FSMCon
 async def display_current_ad(message: Message, state: FSMContext):
     print()
     try:
-        ads = get_ads()
+        ads = await get_ads()
     except Exception as e:
         logging.error(f"Failed to fetch ads: {e}")
         await message.answer("Ошибка при загрузке объявлений.")
@@ -81,11 +81,11 @@ async def display_current_ad(message: Message, state: FSMContext):
     ad_id = ad[0]
     
     # Получаем фото для объявления
-    photos = get_ad_photos(ad_id)
+    photos = await get_ad_photos(ad_id)
     
     ad_text = (
         f"<b>Категория</b>: {ad[4]}\n"
-        f"<b>Местоположение</b>: {ad[5]}\n"
+        # f"<b>Местоположение</b>: {ad[5]}\n"
         f"<b>Заголовок</b>: {ad[2]}\n"
         f"<b>Описание</b>: {ad[3]}\n"
         f"<b>Цена</b>: {ad[6]}"
@@ -93,15 +93,15 @@ async def display_current_ad(message: Message, state: FSMContext):
 
     # Проверяем, является ли объявление пользовательским
     user_id = data.get('user_id')
-    user_ads = get_user_ads(user_id) or []
+    user_ads = await get_user_ads(user_id) or []
     your_ad = (ad_id,) in user_ads
     
     if not your_ad:
-        increment_ad_views(ad_id)
+        await increment_ad_views(ad_id)
 
     liked_ad = (ad_id,) in data.get("saved_ads", [])
     
-    stats = get_statistic((ad_id,))
+    stats = await get_statistic((ad_id,))
     if stats is None:
         stats = (0, 0)  # Значения по умолчанию
 
@@ -227,7 +227,7 @@ async def get_contact(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     data = await state.get_data()
     ad_id = data.get("ad_id")
-    author_data = get_contact_by_ad_id(ad_id)
+    author_data = await get_contact_by_ad_id(ad_id)
 
     # print("\n\n\n",ad_id)
     # print(author_data, "\n\n\n")
@@ -248,10 +248,10 @@ async def change_ad(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     data = await state.get_data()
     ad_id = data.get("ad_id")
-    ad_data = get_ad_by_id(ad_id)[0]
+    ad_data = await get_ad_by_id(ad_id)[0]
     
     # Получаем текущие фото объявления
-    photos = get_ad_photos(ad_id)
+    photos = await get_ad_photos(ad_id)
     
     await state.update_data({
         "ad_id": ad_data[0],
@@ -270,7 +270,7 @@ async def change_ad(callback: CallbackQuery, state: FSMContext):
 async def handle_saved_actions(callback: CallbackQuery, state: FSMContext):
     try:
         # 1. Получаем данные
-        user_id = get_user_id_by_tg_id(callback.from_user.id)
+        user_id = await get_user_id_by_tg_id(callback.from_user.id)
         if not user_id:
             await callback.answer("❌ Пользователь не найден", show_alert=True)
             return
@@ -283,25 +283,25 @@ async def handle_saved_actions(callback: CallbackQuery, state: FSMContext):
 
         # 2. Выполняем действие
         if callback.data == "remove_from_saved":
-            remove_ad_from_saved(ad_id, user_id)
+            await remove_ad_from_saved(ad_id, user_id)
             liked_ad = False
         else:
-            add_ad_in_saved(ad_id, user_id)
+            await add_ad_in_saved(ad_id, user_id)
             liked_ad = True
 
         # 3. Обновляем состояние
         try:
-            saved_ads = get_saved_by_user(user_id) or []
+            saved_ads = await get_saved_by_user(user_id) or []
             await state.update_data(saved_ads=saved_ads)
         except Exception as e:
             logging.error(f"Ошибка обновления состояния: {e}")
 
         # 4. Обновляем интерфейс
-        your_ad = (ad_id,) in (get_user_ads(user_id) or [])
+        your_ad = (ad_id,) in (await get_user_ads(user_id) or [])
         try:
-            stats = get_statistic((ad_id))
+            stats = await get_statistic((ad_id))
             data = await state.get_data()
-            ad = get_ad_by_id(ad_id)
+            ad = await get_ad_by_id(ad_id)
             stats_text = (
                 f"📊 <b>Статистика объявления</b>:\n"
                 f"📅 Дата создания объявления: {await format_date(ad[6])}\n"
@@ -329,8 +329,8 @@ async def handle_saved_actions(callback: CallbackQuery, state: FSMContext):
 async def show_own_ads(message: Message, state: FSMContext):
     await state.update_data(
         viewing_ad=0,
-        saved_ads=get_saved_by_user(get_user_id_by_tg_id(message.from_user.id)),
-        author=get_user_id_by_tg_id(message.from_user.id),
+        saved_ads=await get_saved_by_user(await get_user_id_by_tg_id(message.from_user.id)),
+        author=await get_user_id_by_tg_id(message.from_user.id),
         only_saved=False
     )
     await state.set_state(ViewingAds.viewing_ad)
@@ -340,7 +340,7 @@ async def show_own_ads(message: Message, state: FSMContext):
         'city': data.get('city', 'не указан'),
         'price_min': data.get('price_min', 'не указана'),
         'price_max': data.get('price_max', 'не указана'),
-        'author': get_user_id_by_tg_id(message.from_user.id)
+        'author': await get_user_id_by_tg_id(message.from_user.id)
     }
 
     print()
@@ -351,7 +351,7 @@ async def show_own_ads(message: Message, state: FSMContext):
 async def show_saved_ads(message: Message, state: FSMContext):
     await state.update_data(
         viewing_ad=0,
-        saved_ads=get_saved_by_user(get_user_id_by_tg_id(message.from_user.id)),
+        saved_ads=await get_saved_by_user(await get_user_id_by_tg_id(message.from_user.id)),
         only_saved=True,
         author="не указан"
     )

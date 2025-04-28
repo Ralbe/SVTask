@@ -12,7 +12,7 @@ async def show_filters(message: types.Message, state: FSMContext):
     await message.answer(
         f"Фильтры установлены:\n"
         f"Категория: {data.get('category', 'не указана')}\n"
-        f"Город: {data.get('city', 'не указан')}\n"
+        # f"Город: {data.get('city', 'не указан')}\n"
         f"Цена от: {data.get('price_min', 'не указана')}\n"
         f"Цена до: {data.get('price_max', 'не указана')}",
         reply_markup=filter_kb

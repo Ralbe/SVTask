@@ -13,7 +13,7 @@ cursor = conn.cursor()
 conn.autocommit = True
 
 
-def get_ads():
+async def get_ads():
     """Получает все объявления из базы данных."""
     cursor.execute("""
         SELECT Ads.ad_id,Ads.user_id, Ads.title, Ads.description, Categories.name, Locations.city, Ads.money, Ads.create_date
@@ -23,7 +23,7 @@ def get_ads():
     """)
     return cursor.fetchall()
 
-def get_ad_by_id(ad_id):
+async def get_ad_by_id(ad_id):
     """Получает все объявления из базы данных."""
     cursor.execute("""
         SELECT Ads.user_id, Ads.title, Ads.description, Categories.name, Locations.city, Ads.money, Ads.create_date
@@ -34,7 +34,7 @@ def get_ad_by_id(ad_id):
     """, (ad_id,))
     return cursor.fetchall()
 
-def increment_ad_views(ad_id: int):
+async def increment_ad_views(ad_id: int):
     cursor.execute(
         "INSERT INTO ad_statistics (ad_id, views) "
         "VALUES (%s, 1) ON CONFLICT (ad_id) "
@@ -42,20 +42,20 @@ def increment_ad_views(ad_id: int):
         (ad_id,)
     )
 
-def get_user_by_email(email):
+async def get_user_by_email(email):
     """Получает пользователя по email."""
     cursor.execute("SELECT * FROM people WHERE email = %s", (email,))
     return cursor.fetchone()
 
 
-def authenticate_user(email, password):
+async def authenticate_user(email, password):
     """Аутентифицирует пользователя по email и паролю."""
     cursor.execute("SELECT * FROM people WHERE email = %s AND password = %s",
                    (email, password))
     return cursor.fetchone()
 
 
-def set_user_data(first_name, second_name, phone, email, tg_id):
+async def set_user_data(first_name, second_name, phone, email, tg_id):
     """Сохраняет данные пользователя"""
     cursor.execute(
         """
@@ -68,7 +68,7 @@ def set_user_data(first_name, second_name, phone, email, tg_id):
         """,
         (first_name, second_name, phone, email, tg_id))
     
-def get_user_data(tg_id):
+async def get_user_data(tg_id):
     """Возвращает Имя, Фамилию, Номер, Почту"""
 
     cursor.execute(
@@ -80,7 +80,7 @@ def get_user_data(tg_id):
     )
     return cursor.fetchall()
 
-def get_user_ads(user_id):
+async def get_user_ads(user_id):
     cursor.execute(
     """
     SELECT ad_id
@@ -90,7 +90,7 @@ def get_user_ads(user_id):
     )
     return cursor.fetchall()
     
-def set_contact(tg_id, name, number):
+async def set_contact(tg_id, name, number):
     """Добавляет нового пользователя в базу данных."""
     cursor.execute(
         """
@@ -103,7 +103,7 @@ def set_contact(tg_id, name, number):
         (tg_id, name, number))
 
 
-def insert_new_ad(user_id, category_id, title, description, price, location_id='1'):
+async def insert_new_ad(user_id, category_id, title, description, price, location_id='1'):
     
     # cursor.execute("SELECT nextval('ads_ad_id_seq')")
     # ad_id = cursor.fetchone()[0]
@@ -118,7 +118,7 @@ def insert_new_ad(user_id, category_id, title, description, price, location_id='
     ad_id = cursor.fetchone()[0]
     return ad_id
 
-def update_ad(ad_id, user_id, category_id, title, description, price, location_id='1'):
+async def update_ad(ad_id, user_id, category_id, title, description, price, location_id='1'):
     cursor.execute(
         """
         UPDATE Ads
@@ -129,7 +129,7 @@ def update_ad(ad_id, user_id, category_id, title, description, price, location_i
     )
     return ad_id
 
-def add_category(category_name):
+async def add_category(category_name):
     """Получает идентификатор категории по названию."""
     cursor.execute("""
                    INSERT INTO Categories(name)
@@ -140,7 +140,7 @@ def add_category(category_name):
     result = cursor.fetchone()
     return result[0] if result else None
 
-def add_user_by_tg_id(tg_id):
+async def add_user_by_tg_id(tg_id):
     """Добавляет пользователя по тг id."""
     cursor.execute("""  
                    INSERT INTO People(tg_id)
@@ -151,7 +151,7 @@ def add_user_by_tg_id(tg_id):
     result = cursor.fetchone()
     return result[0] if result else None
 
-def get_user_id_by_tg_id(tg_id):
+async def get_user_id_by_tg_id(tg_id):
     """Получает идентификатор категории по названию."""
     cursor.execute("""
                    SELECT COALESCE((
@@ -166,7 +166,7 @@ def get_user_id_by_tg_id(tg_id):
         return add_user_by_tg_id(tg_id)
     return result[0] if result else None
 
-def add_category(category_name):
+async def add_category(category_name):
     """Получает идентификатор категории по названию."""
     cursor.execute("""
                    INSERT INTO Categories(name)
@@ -177,7 +177,7 @@ def add_category(category_name):
     result = cursor.fetchone()
     return result[0] if result else None
 
-def get_category_id(category_name):
+async def get_category_id(category_name):
     """Получает идентификатор категории по названию."""
     cursor.execute("""
                    SELECT COALESCE((
@@ -192,7 +192,7 @@ def get_category_id(category_name):
     #     return add_category(category_name)
     return result[0] if result else None
 
-def get_categories():
+async def get_categories():
     cursor.execute("""
                    SELECT name
                    FROM Categories
@@ -200,7 +200,7 @@ def get_categories():
                     """)
     return cursor.fetchall()
 
-def get_contact_by_ad_id(ad_id):
+async def get_contact_by_ad_id(ad_id):
     cursor.execute("""
                    SELECT firstname, tg_id
                    FROM Ads join people on ads.user_id = people.user_id 
@@ -209,7 +209,7 @@ def get_contact_by_ad_id(ad_id):
     )
     return cursor.fetchall()
 
-def get_saved_by_user(user_id):
+async def get_saved_by_user(user_id):
     cursor.execute("""
                    SELECT ad_id
                    FROM saved_ads
@@ -217,7 +217,7 @@ def get_saved_by_user(user_id):
                    """, (user_id,))
     return cursor.fetchall()
 
-def users_who_saved(ad_id):
+async def users_who_saved(ad_id):
     cursor.execute("""
                    SELECT user_id
                    FROM saved_ads
@@ -225,7 +225,7 @@ def users_who_saved(ad_id):
                    """, (ad_id,))
     return cursor.fetchall()
 
-def add_ad_in_saved(ad_id, user_id):
+async def add_ad_in_saved(ad_id, user_id):
     cursor.execute(
         """
         INSERT INTO saved_ads(ad_id, user_id)
@@ -241,7 +241,7 @@ def add_ad_in_saved(ad_id, user_id):
             (ad_id,)
         )
     
-def remove_ad_from_saved(ad_id, user_id):
+async def remove_ad_from_saved(ad_id, user_id):
     cursor.execute(
         """
         DELETE FROM saved_ads
@@ -256,7 +256,7 @@ def remove_ad_from_saved(ad_id, user_id):
         (ad_id,)
     )
 
-def get_statistic(ad_id: tuple) -> tuple:
+async def get_statistic(ad_id: tuple) -> tuple:
     """Возвращает статистику объявления: (просмотры, сохранения)"""
     try:
         cursor.execute(
@@ -269,7 +269,7 @@ def get_statistic(ad_id: tuple) -> tuple:
         # logging.error(f"Error in get_statistic: {e}")
         return (0, 0)  # Возвращаем значения по умолчанию при ошибке
 
-def add_location(location_name):
+async def add_location(location_name):
     """Получает идентификатор категории по названию."""
     cursor.execute("""
                    INSERT INTO Locations(city)
@@ -280,7 +280,7 @@ def add_location(location_name):
     result = cursor.fetchone()
     return result[0] if result else None
 
-def get_location_id(location_name):
+async def get_location_id(location_name):
     """Получает идентификатор категории по названию."""
     cursor.execute("""
                    SELECT COALESCE((
@@ -295,7 +295,7 @@ def get_location_id(location_name):
         return add_location(location_name)
     return result[0] if result else None
 
-def add_photo(ad_id: int, file_id: str):
+async def add_photo(ad_id: int, file_id: str):
     """Добавляет фотографию к объявлению"""
 
     cursor.execute(
@@ -304,13 +304,13 @@ def add_photo(ad_id: int, file_id: str):
     )
     return cursor.fetchone()[0]
 
-def get_ad_photos(ad_id: int) -> list:
+async def get_ad_photos(ad_id: int) -> list:
     """Возвращает список фотографий для объявления"""
 
     cursor.execute("SELECT file_id FROM ad_photos WHERE ad_id = %s ORDER BY photo_id", (ad_id,))
     return [row[0] for row in cursor.fetchall()]
 
-def delete_ad_photos(ad_id: int):
+async def delete_ad_photos(ad_id: int):
     """Удаляет все фотографии объявления"""
 
     cursor.execute("DELETE FROM ad_photos WHERE ad_id = %s", (ad_id,))
