@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+body {
+    margin: 0;
+    background-color: #fff;
+  }
+
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 100px;
+    border-bottom: 1px solid #ccc;
+    font-size: 16px;
+  }
+  .location-button {
+    background-color: #AF0B52;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: none;
+    display: flex;
+    align-items: center;
+  }
+
+  .location-button img {
+    margin: 0 5px;
+  }
+
+  .location-button .city {
+    margin: 0 20px;
+  }
+
+  .user-switcher {
+    display: inline-flex;
+    width: 30%;
+    justify-content: space-around;
+  }
+
+  .user-switcher button {
+    padding: 8px 50px;
+    margin-left: 10px;
+    border-radius: 20px;
+    border: 2px solid #707070;
+    background-color: white;
+    font-weight: bold;
+    color: #707070;
+  }
+  .user-switcher .active {
+    border-color: #0075FF;
+    color: #0075FF;
+  }
+  .nav {
+    background-color: #0075FF;
+    color: white;
+    padding: 12px 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+  }
+
+  .nav .label {
+    color: inherit;
+    display: block;
+    
+  }
+
+  .nav .label .site-label {
+    font-size: 14px;
+  }
+
+  .nav .label .site-label .red_I {
+    display: inline-block;
+    color: #AF0B52;
+    position: relative;
+    top: -10px;
+    left: -105px;
+    rotate: -45deg;
+  }
+  
+  .nav .menu {
+    display: flex;
+  }
+
+  .nav .menu .menu-item {
+    margin: 0px 50px;
+    display: block;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: 2px solid #0075FF;
+  }
+
+  .nav .menu .active-menu-item {
+    border-color: white;
+    border-radius: 10px;
+    
+  }
+
+  .nav .login-button {
+    margin-left: auto;
+    background-color: white;
+    color: #0075FF;
+    padding: 6px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+  }
+
+  
+  .nav .login-button:hover {
+    background-color: #0075FF;
+    color: white;
+  }
+

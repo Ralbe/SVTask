@@ -1,0 +1,25 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block style %}
+{% static "css/vacation.css" %}
+{% endblock %}
+
+{% block title %}
+Вакансия {{ vac.title }}
+{% endblock %}
+
+{% block content %}
+<div class="main">
+    <div class="vac">
+        <span class='title'>Название вакансии: {{ vac.title }}</span>
+        <span class='description'>Описание вакансии: {{ vac.description }}</span>
+        <span class='salary'>Заработная плата: {{ vac.salary }} руб. </span>
+    </div>
+    <div class="user">
+        <h3>Опубликовал</h3>
+        <h4>{{ user.firstname }} {{user.lastname}}</h4>
+        <h5>{{ user.phone }}</h5>
+    </div>
+{% endblock %}

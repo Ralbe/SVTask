@@ -1,0 +1,25 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block style %}
+{% static "css/main.css" %}
+{% endblock %}
+
+{% block nav_active %}
+<a class="menu-item" href="/vacations">Вакансии</a>
+<a class="menu-item" href="/advertisements">Объявления</a>
+{% endblock %}
+
+{% block title %}
+Работа в Ростове-на-Дону
+{% endblock %}
+
+
+{% block content %}
+<img class="main-image" src="https://images.unsplash.com/photo-1494173853739-c21f58b16055" alt="Работа">
+
+  <div class="description">
+    Работа в Ростове-на-Дону — это самый широкий спектр направлений в различных отраслях деятельности: от сотрудников сферы обслуживания до руководителей крупнейших компаний. Используя нашу обширную информационную базу, вы легко найдете подходящую работу в Ростове-на-Дону, ведь СВиО сотрудничает со множеством компаний-работодателей.
+</div>
+{% endblock %}

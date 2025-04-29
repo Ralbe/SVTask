@@ -1,0 +1,17 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Создание вакансии
+{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Опубликовать</button>
+</form>
+{% endblock content %}
+
+

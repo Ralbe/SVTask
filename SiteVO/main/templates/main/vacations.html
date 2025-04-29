@@ -1,0 +1,51 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block style %}
+{% static "css/vac_style.css" %}
+{% endblock %}
+
+{% block title %}
+Вакансии
+{% endblock %}
+
+{% block nav_active %}
+<a class="menu-item active-menu-item" href="/vacations">Вакансии</a>
+<a class="menu-item" href="/advertisements">Объявления</a>
+{% endblock %}
+
+{% block content %}
+<div class="main">
+    <div class="search-section">
+        <div class="search-title">
+            <h2>Работа в Ростове-на-Дону</h2>
+            <button onclick="document.location='{% url 'create_vac' %}'" class="create-button">
+                Опубликовать вакансию
+            </button>
+        </div>
+        <div class="search-instruments">  
+            <input class="search-box" type="text" placeholder="🔍 Профессия, должность">
+            <span class="settings-icon">⚙️</span>
+            <button class="search-button">Найти</button>
+        </div>
+    </div>
+  </div>
+
+
+    <div class="vacs">
+    {% for el in vacs %}
+        <a href="vacation?id={{ el.ad_id }}" style="color: inherit;">
+            <div class="vac">
+                    <div class="title">
+                        {{ el.title }}
+                    </div>
+                    <div class="description">
+                        {{ el.description }}
+                    </div>
+            </div>
+        </a>
+    {% endfor %}
+    </div>
+
+{% endblock %}
