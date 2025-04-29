@@ -1,24 +1,30 @@
-{% extends "main/base.html" %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="register.css" rel="stylesheet">
+</head>
+<body>
+    <div class="registration-container">
+        <h1 class="registration-title">Авторизация</h1>
+        
+        <form>
+            <div class="form-row">
+                <label for="Nomer" class="form-label">Номер:</label>
+                <input type="text" id="promotions" class="form-input" placeholder="Введите Ваш номер">
+            </div>
+            
+            
+            <div class="form-row">
+                <label for="Password" class="form-label">Пароль:</label>
+                <input type="text" id="for" class="form-input" placeholder="Например: *********">
+            </div>
 
-{% load static %}
-
-{% block title %}
-Авторизация
-{% endblock %}
-
-{% block style %}
-{% static "css/register.css" %}
-{% endblock style %}
-
-
-{% block content %}
-<form method="post">
-    <h3>Авторизация</h3>
-    {% csrf_token %}
-    
-    {{ form.as_p }}
-    <button type="submit">Авторизоваться</button>
-    <a href="{% url 'register' %}">Нет с нами? Зарегистрируйтесь</a>
-</form>
-
-{% endblock content %}
+            <button type="submit" class="submit-btn">Авторизоваться</button>
+            <div><a style="margin-left:30%; margin-top:10px;" href="#">Нет с нами? Зарегистрируйтесь!</a></div>
+            
+        </form>
+    </div>
+</body>
+</html>
