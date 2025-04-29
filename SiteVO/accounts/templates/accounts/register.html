@@ -1,21 +1,42 @@
-{% extends "main/base.html" %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="register.css" rel="stylesheet">
+</head>
+<body>
+    <div class="registration-container">
+        <h1 class="registration-title">Регистрация</h1>
+        
+        <form>
+            <div class="form-row">
+                <label for="Nomer" class="form-label">Номер:</label>
+                <input type="text" id="promotions" class="form-input" placeholder="Введите Ваш номер">
+            </div>
+            
+            <div class="form-row">
+                <label for="Firstname" class="form-label">Имя:</label>
+                <input type="text" id="for" class="form-input" placeholder="Например: Мохаммед">
+            </div>
+            
+            <div class="form-row">
+                <label for="Second" class="form-label">Фамилия:</label>
+                <input type="text" id="persia" class="form-input" placeholder="Например: Мактрахер">
+            </div>
+            
+            <div class="form-row">
+                <label for="Password" class="form-label">Пароль:</label>
+                <input type="text" id="for" class="form-input" placeholder="Например: *********">
+            </div>
 
-{% load static %}
+            <div class="form-row">
+                <label for="Password" class="form-label">Пароль повторно:</label>
+                <input type="text" id="for" class="form-input" placeholder="Например: *********">
+            </div>
 
-{% block title %}
-Регистрация
-{% endblock %}
-
-{% block style %}
-{% static "css/register.css" %}
-{% endblock style %}
-
-
-{% block content %}
-<form method="post">
-    <h3>Регистрация</h3>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Зарегистрироваться</button>
-</form>
-{% endblock content %}
+            <button type="submit" class="submit-btn">Зарегистрироваться</button>
+        </form>
+    </div>
+</body>
+</html>
