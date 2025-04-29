@@ -1,0 +1,91 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #333;
+}
+
+.form-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    padding: 40px;
+}
+
+.form-title {
+    font-size: 30px;
+    margin-bottom: 30px;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    margin-right: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e4e8;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, textarea:focus {
+    border-color: #6e8efb;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(110, 142, 251, 0.2);
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.price-input {
+    max-width: 200px;
+}
+
+.price-container {
+    display: flex;
+    align-items: center;
+}
+
+.price-container span {
+    margin-left: 10px;
+    font-size: 16px;
+    color: #7f8c8d;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(110, 142, 251, 0.3);
+}
