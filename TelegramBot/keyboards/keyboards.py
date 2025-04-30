@@ -13,14 +13,66 @@ start_kb = ReplyKeyboardMarkup(
     input_field_placeholder="Воспользуйтесь меню:"
 )
 
-main_kb = ReplyKeyboardMarkup(
+# Клавиатура для просмотра вакансий
+# Для просмотра вакансий
+vacancy_kb_showed = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text='🕶Объявления'), KeyboardButton(text='📋Вакансии')],
-        [KeyboardButton(text='👤Профиль')]#,
-         #KeyboardButton(text='🚪Выйти с аккаунта')]
-        ], resize_keyboard=True, one_time_keyboard=True,
-    input_field_placeholder="Воспользуйтесь меню:"
+        [KeyboardButton(text="✔️Разместить вакансию"),
+        #   KeyboardButton(text="⚙️Фильтры")],
+        # [KeyboardButton(text="❌Сбросить фильтры"), 
+         KeyboardButton(text="⬇️Скрыть меню")],
+        # [KeyboardButton(text="Мои вакансии"),
+        #  KeyboardButton(text="Сохранённые вакансии")],
+        [KeyboardButton(text="🏠На главную")]
+    ],
+    resize_keyboard=True
 )
+
+vacancy_kb_hided = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="⬆️Показать меню")],
+        [KeyboardButton(text="🏠На главную")]
+    ],
+    resize_keyboard=True
+)
+
+def vacancy_ikb(saved=False, your_vacancy=False):
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="◀️ Назад", callback_data="prev_vacancy"),
+                InlineKeyboardButton(text="Вперед ▶️", callback_data="next_vacancy")
+            ],
+            [
+                InlineKeyboardButton(
+                    text="❤️ В избранном" if saved else "♡ Добавить в избранное",
+                    callback_data="remove_saved_vacancy" if saved else "add_saved_vacancy"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="✏️ Редактировать" if your_vacancy else "✉️ Связаться",
+                    callback_data="edit_vacancy" if your_vacancy else "get_vacancy_contact"
+                )
+            ]
+        ]
+    )
+    return keyboard
+
+vacancy_edit_kb = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="Название"), KeyboardButton(text="Описание")],
+        [KeyboardButton(text="Зарплата"), KeyboardButton(text="Требования")],
+        [KeyboardButton(text="Контакты"), KeyboardButton(text="❌Назад")]
+    ],
+    resize_keyboard=True
+)
+
+# Основная клавиатура с вакансиями
+main_kb = ReplyKeyboardMarkup(keyboard=[
+    [KeyboardButton(text="👔Вакансии"), KeyboardButton(text="🕶Объявления")],
+    [KeyboardButton(text="👤Профиль")]
+], resize_keyboard=True)
 
 def ads_ikb(saved, your_ad):
     
