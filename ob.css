@@ -1,0 +1,89 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: #333;
+}
+
+.vacancy-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    overflow: hidden;
+
+}
+
+.vacancy-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.vacancy-title {
+    font-size: 24px;
+    margin: 0 0 10px;
+    color: #222;
+}
+
+.salary {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c7be5;
+    margin-bottom: 8px;
+}
+
+.company {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.location {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.location-icon {
+    margin-right: 5px;
+    color: #888;
+}
+
+.btn-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-apply {
+    flex: 1; 
+    padding: 12px;
+    background-color: #2c7be5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-favorite {
+    width: 50px;
+    padding: 12px;
+    background-color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+
+.btn-apply:hover {
+    background-color: #1a68d1;
+}
