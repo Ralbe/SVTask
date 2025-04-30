@@ -12,14 +12,49 @@
 
 {% block content %}
 <div class="main">
-    <div class="vac">
-        <span class='title'>Название вакансии: {{ vac.title }}</span>
-        <span class='description'>Описание вакансии: {{ vac.description }}</span>
-        <span class='salary'>Заработная плата: {{ vac.salary }} руб. </span>
+    <a onclick="javascript:history.back(); return false;" class="back-link">← Назад</a>
+    <div class="vacancy-container">
+        <div class="vacancy-header">
+            <h1 class="vacancy-title">{{ vac.title }}</h1>
+            <div class="salary">{{ vac.salary }} ₽</div>
+            
+            <div class="company-info">
+                <div class="company-logo">{{ create_user.firstname.0 }}{{ create_user.lastname.0 }}</div>
+                <div>
+                    <div class="company-name">{{ create_user.firstname }} {{ create_user.lastname }}</div>
+                
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Описание вакансии</h2>
+            <div class="section-content">
+                {{ vac.description }}
+                
+            </div>
+            <div class="section-count">
+                {{ vac.count_views }} 🕶️
+            </div>
+            <div class="section-count">
+                {{ count_fav }} ❤️
+            </div>
+        </div>
+
+        <div class="btn-container">
+            {% if user.id == create_user.id %}
+                <button class="btn-delete" onclick="window.location.href+='&delete={{ user.id }}'">Ваша вакансия. Удалить?</div>
+            {% else %}
+
+                {% if favorite %}
+                <button class="btn-delete" onclick="window.location.href+='&delete_favorite_user={{ user.id }}'">Удалить из избранного</button>
+                {% else %}
+                <button class="btn-apply" onclick="window.location.href+='&add_favorite_user={{ user.id }}'">Добавить в избранное</button>
+                {% endif %}
+
+            {% endif %}
+        </div>
     </div>
-    <div class="user">
-        <h3>Опубликовал</h3>
-        <h4>{{ user.firstname }} {{user.lastname}}</h4>
-        <h5>{{ user.phone }}</h5>
-    </div>
+    
 {% endblock %}

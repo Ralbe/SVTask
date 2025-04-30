@@ -12,9 +12,44 @@
 
 
 {% block content %}
-    <h3>Профиль</h3>    
-    <h4>Имя: {{ user.firstname }}</h4>
-    <h4>Фамилия: {{ user.lastname }}</h4>
-    <h4>Номер: {{ user.phone }}</h4>
-    <a href="{% url 'logout' %}" class="logout">Выйти</a>
+<div class='main'>
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="avatar">{{ user.firstname.0 }}{{ user.lastname.0 }}</div>
+            <h1 class="profile-name">{{ user.firstname }} {{ user.lastname }}</h1>
+        </div>
+
+        <div class="profile-info">
+            <div class="info-item">
+                <i class="icon phone-icon"></i>
+                <span>{{ user.phone }}</span>
+            </div>
+
+            <div class="izbr">
+                <a href="{% url 'my_vacs' %}" class="nav-square">
+                    <div class="nav-icon">💼</div>
+                    <div class="nav-title">Мои вакансии</div>
+                    <div class="nav-count">{{ count.0 }} опубликованных</div>
+                </a>
+                <a href="{% url 'favorite_vacs' %}" class="nav-square">
+                    <div class="nav-icon">⭐</div>
+                    <div class="nav-title">Избранные вакансии</div>
+                    <div class="nav-count">{{ count.1 }} сохраненных</div>
+                </a>
+                <a href="{% url 'favorite_ads' %}" class="nav-square">
+                    <div class="nav-icon">⭐</div>
+                    <div class="nav-title">Избранные объявления</div>
+                    <div class="nav-count">{{ count.2 }} сохраненных</div>
+                </a>
+                <a href="{% url 'my_ads' %}" class="nav-square">
+                    <div class="nav-icon">📢</div>
+                    <div class="nav-title">Мои объявления</div>
+                    <div class="nav-count">{{ count.3 }} опубликованных</div>
+                </a>
+            </div>
+
+            <a href="{% url 'logout' %}" class="btn2">Выйти с профиля</a>
+        </div>
+    </div>
+</div>
 {% endblock content %}

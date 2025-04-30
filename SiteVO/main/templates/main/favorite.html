@@ -1,0 +1,35 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block style %}
+{% static "css/vac_style.css" %}
+{% endblock %}
+
+{% block title %}
+{% if fav %}Избранные{% else %}Ваши{% endif %} {% if vacs %}вакансии{% else %}объявления{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="main">
+    <div class="vacs">
+        <h2>{% if fav %}Избранные{% else %}Ваши{% endif %} {% if vacs %}вакансии{% else %}объявления{% endif %}</h2>
+        {% for el in ads %}
+            <div class="vac">
+                <div class="vacancy-card">
+                    <div class="vacancy-header">
+                        <h1 class="vacancy-title">{{ el.title }}</h1>
+                        <div class="salary">{% if vacs %}{{ el.salary }}{% else %}{{ el.price }}{% endif %} руб.</div>
+                        <div class="btn-container">
+                            <button class="btn-apply" onclick="window.location.href='{% if vacs %}vacation{% else %}advertisement{% endif %}?id={{ el.ad_id }}'">Подробнее</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+{% endblock %}

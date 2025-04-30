@@ -25,9 +25,13 @@
             </button>
         </div>
         <div class="search-instruments">  
-            <input class="search-box" type="text" placeholder="🔍 Профессия, должность">
-            <span class="settings-icon">⚙️</span>
-            <button class="search-button">Найти</button>
+            <form method="get">
+                <div class="search-boxes">
+                    <input class="search-box" type="text" placeholder="🔍 Профессия, должность" name="title">
+                    <input class="search-box" type="number" placeholder="Заработная плата" name="salary">
+                </div>
+                <button class="search-button">Найти</button>
+            </form>
         </div>
     </div>
   </div>
@@ -35,16 +39,21 @@
 
     <div class="vacs">
     {% for el in vacs %}
-        <a href="vacation?id={{ el.ad_id }}" style="color: inherit;">
-            <div class="vac">
-                    <div class="title">
-                        {{ el.title }}
+        <div class="vac">
+            <div class="vacancy-card">
+                <div class="vacancy-header">
+                    <h1 class="vacancy-title">{{ el.title }}</h1>
+                    <div class="salary">{{ el.salary }} руб.</div>
+
+                    
+                    <div class="btn-container">
+                        <button class="btn-apply" onclick="window.location.href='vacation?id={{ el.ad_id }}'">Подробнее</button>
+                        <!-- <button class="btn-favorite">❤️</button> -->
                     </div>
-                    <div class="description">
-                        {{ el.description }}
-                    </div>
+        
+                </div>
             </div>
-        </a>
+        </div>
     {% endfor %}
     </div>
 

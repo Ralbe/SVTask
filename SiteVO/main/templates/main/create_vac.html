@@ -1,17 +1,29 @@
 {% extends 'main/base.html' %}
 
+{% load static %}
+
+
 {% block title %}
 Создание вакансии
 {% endblock %}
 
-{% load static %}
+{% block style %}
+{% static "css/create.css" %}
+{% endblock %}
+
+
+
 
 {% block content %}
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Опубликовать</button>
-</form>
+<div class='main'>
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-btn">Опубликовать</button>
+        </form>
+    </div>
+</div>
 {% endblock content %}
 
 

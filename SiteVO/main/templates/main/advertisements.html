@@ -25,25 +25,33 @@
             </button>
         </div>  
         <div class="search-instruments">  
-            <input class="search-box" type="text" placeholder="🔍 Услуга, товар">
-            <span class="settings-icon">⚙️</span>
-            <button class="search-button">Найти</button>
+            <form method="get">
+                <div class="search-boxes">
+                    <input class="search-box" type="text" placeholder="🔍 Услуга, товар" name="title">
+                    <input class="search-box" type="number" placeholder="Стоимость" name="price">
+                </div>
+                <button class="search-button">Найти</button>
+            </form>
         </div>
     </div>
   </div>
 
-<div class="vacs">
+  <div class="vacs">
     {% for el in ads %}
-    <a href="advertisement?id={{ el.ad_id }}" style="color: inherit;">
         <div class="vac">
-                <div class="title">
-                    {{ el.title }}
+            <div class="vacancy-card">
+                <div class="vacancy-header">
+                    <h1 class="vacancy-title">{{ el.title }}</h1>
+                    <div class="salary">{{ el.price }} руб.</div>
+
+                    
+                    <div class="btn-container">
+                        <button class="btn-apply" onclick="window.location.href='advertisement?id={{ el.ad_id }}'">Подробнее</button>
+                    </div>
+        
                 </div>
-                <div class="description">
-                    {{ el.description }}
-                </div>
+            </div>
         </div>
-    </a>
     {% endfor %}
-</div>
+    </div>
 {% endblock %}

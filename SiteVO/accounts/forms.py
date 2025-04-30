@@ -4,9 +4,15 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 
 
-class RegisterForm(forms.ModelForm):
+class MyModelForm(forms.ModelForm):
+    error_css_class = 'class-error'
+    required_css_class = 'form-row'
+    
 
-    phone = forms.CharField(widget=forms.NumberInput, max_length=12, label='Номер')
+
+class RegisterForm(MyModelForm):
+
+    phone = forms.RegexField("^\+?\d{1,3}?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$", label='Номер')
     password = forms.CharField(widget=forms.PasswordInput, label='Пароль')
     confirm_password = forms.CharField(widget=forms.PasswordInput, label='Повторите пароль')
     

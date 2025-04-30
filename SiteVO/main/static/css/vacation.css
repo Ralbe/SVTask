@@ -1,18 +1,151 @@
 .main {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    max-width: 60%;
+}
+
+.vacancy-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.vacancy-header {
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+}
+
+.vacancy-title {
+    font-size: 28px;
+    margin: 0 0 10px;
+    color: #222;
+}
+
+.salary {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2c7be5;
+    margin-bottom: 8px;
+}
+
+.company-info {
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.company-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    background-color: #f0f4f8;
+    margin-right: 15px;
+    display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 24px;
+    color: #2c7be5;
 }
 
-.vac {
-    display: flex;
-    flex-direction: column;
-    align-items: left;
+.company-name {
+    font-size: 18px;
+    font-weight: 500;
 }
 
-.user {
-    display: flex;
-    flex-direction: column;
-    align-items: right;
+
+
+.section {
+    margin-bottom: 30px;
 }
+
+.section-title {
+    font-size: 20px;
+    margin: 0 0 15px;
+    color: #222;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #eee;
+}
+
+.section-content {
+    padding-left: 15px;
+}
+
+ul.details {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul.details li {
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 25px;
+}
+
+ul.details li:before {
+    content: "•";
+    color: #2c7be5;
+    font-size: 20px;
+    position: absolute;
+    left: 0;
+    top: -2px;
+}
+
+.btn-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-apply {
+    flex: 1;
+    padding: 14px;
+    background-color: #2c7be5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-apply:hover {
+    background-color: #1a68d1;
+}
+
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #2c7be5;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.btn-delete {
+    flex: 1;
+    padding: 14px;
+    background-color: rgb(175, 11, 82);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+}
+
+.section-count {
+    margin-top: 40px;
+    font-size: 20px;
+  }
