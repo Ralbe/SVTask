@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('applicant')">Соискатель</button>
+            <button class="tab-button" onclick="showTab('employer')">Работодатель</button>
+        </div>
+        <div class="tab-content" id="applicant-tab">
+            <h2>Регистрация Соискателя</h2>
+            <form id="applicant-form" >
+                <label for="applicant-name">Имя *</label>
+                <input type="text" id="applicant-name" name="applicant-name" placeholder="Например, Иван" required><br>
+
+                <label for="applicant-surname">Фамилия *</label>
+                <input type="text" id="applicant-surname" name="applicant-surname" placeholder="Например, Иванов" required><br>
+
+                <label for="applicant-email">Email *</label>
+                <input type="email" id="applicant-email" name="applicant-email" placeholder="Например, email@example.com" required><br>
+
+                <label for="applicant-password">Пароль *</label>
+                <input type="password" id="applicant-password" name="applicant-password" placeholder="Введите пароль" required><br>
+
+                <button type="submit" onclick = "redictMain()">Зарегистрироваться</button>
+            </form>
+        </div>
+        <div class="tab-content" id="employer-tab" style="display: none;">
+            <h2>Регистрация Работодателя</h2>
+            <form id="employer-form">
+                <label for="employer-name">Название компании *</label>
+                <input type="text" id="employer-name" name="employer-name" placeholder="Например, ООО Ромашка" required><br>
+
+                <label for="employer-email">Email *</label>
+                <input type="email" id="employer-email" name="employer-email" placeholder="Например, email@example.com" required><br>
+
+                <label for="employer-password">Пароль *</label>
+                <input type="password" id="employer-password" name="employer-password" placeholder="Введите пароль" required><br>
+
+                <button type="submit" onclick = "redictMain()">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+    <script src="static/script.js"></script>
+</body>
+</html>
